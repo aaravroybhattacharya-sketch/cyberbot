@@ -6,93 +6,69 @@ st.set_page_config(
     page_title="NEO-NET GLOBAL CORE // v6.0", 
     page_icon="🔮", 
     layout="wide",
-    initial_sidebar_state="collapsed"
+    initial_sidebar_state="expanded"
 )
 
-# 2. CHATGPT-STYLE COMPACT BAR AND MULTI-THEME CSS
+# 2. CYBERPUNK HUD DESIGN STYLING WITH SIDE-BY-SIDE INTEGRATION
 st.markdown("""
     <style>
         .stApp { background-color: #0d0f12 !important; color: #ffffff !important; }
+        section[data-testid="stSidebar"] { background-color: #11151c !important; }
+        section[data-testid="stSidebar"] * { color: #ffffff !important; }
+        input { background-color: #1a1f26 !important; color: #00f0ff !important; border: 2px solid #00f0ff !important; border-radius: 4px !important; }
         
-        /* Remove the native Streamlit sidebar hamburger menu and headers */
-        section[data-testid="stSidebar"] { display: none !important; }
-        footer {visibility: hidden;}
-        
-        .glow-title { color: #00f0ff; text-shadow: 0 0 12px rgba(0, 240, 255, 0.6); font-family: 'Courier New', monospace; font-weight: bold; font-size: 2.5rem; }
+        /* High-visibility input text styling */
+        div[data-testid="stChatInput"] textarea { color: #00f0ff !important; background-color: #1a1f26 !important; font-size: 16px !important; }
+        div[data-testid="stChatInput"] { border: 2px solid #00f0ff !important; border-radius: 4px !important; }
         
         /* Chat bubble styles */
         div[data-testid="stChatMessage"] { background-color: #13171f !important; border-left: 4px solid #00f0ff !important; border-radius: 4px 12px 12px 4px !important; margin-bottom: 15px !important; padding: 20px !important; }
         div[data-testid="stChatMessage"] p, div[data-testid="stChatMessage"] span, div[data-testid="stChatMessage"] li { color: #ffffff !important; font-size: 16px !important; }
         div[data-testid="stChatMessage"]:has(div[data-testid="stChatMessageAvatar"]):nth-child(even) { border-left: 4px solid #bd00ff !important; background-color: #17131f !important; }
         div[data-testid="stChatMessage"]:has(div[data-testid="stChatMessageAvatar"]):nth-child(even) p, div[data-testid="stChatMessage"]:has(div[data-testid="stChatMessageAvatar"]):nth-child(even) span { color: #00f0ff !important; }
+        .glow-title { color: #00f0ff; text-shadow: 0 0 12px rgba(0, 240, 255, 0.6); font-family: 'Courier New', monospace; font-weight: bold; font-size: 2.5rem; }
         
-        /* 🎨 THE ATTRACIVE SLATE-GRAY BORDERLESS CHATBAR */
-        div[data-testid="stChatInput"] {
-            background-color: #1e2530 !important;
-            border: none !important;
-            border-radius: 24px !important;
-            box-shadow: none !important;
-            padding: 4px 12px !important;
-        }
+        /* Clean minimalist upload overrides for the chat row */
+        div[data-testid="stFileUploaderDropzone"] { padding: 0 !important; border: none !important; background: transparent !important; min-height: unset !important; }
+        div[data-testid="stFileUploaderDropzone"] svg { display: none !important; }
+        div[data-testid="stFileUploaderDropzone"] div { display: none !important; }
+        div[data-testid="stFileUploaderFileData"] { display: none !important; }
+        .stFileUploader small { display: none !important; }
+        .stFileUploader label { display: none !important; }
         
-        /* Force user text to be bright white, clean, and 100% visible */
-        div[data-testid="stChatInput"] textarea {
-            color: #ffffff !important; 
-            background-color: transparent !important;
-            border: none !important;
-            box-shadow: none !important;
-            font-size: 16px !important;
-        }
-        
-        /* ➕ CLEAN PLUS BUTTON OVERRIDES */
         .stFileUploader button {
-            background: transparent !important;
-            border: none !important;
-            color: #ffffff !important;
-            font-size: 26px !important;
+            background: #1a1f26 !important;
+            border: 2px solid #bd00ff !important;
+            color: #00f0ff !important;
+            font-size: 20px !important;
             font-weight: bold !important;
-            padding: 0 !important;
-            margin: 0 !important;
-            width: auto !important;
-            height: auto !important;
+            border-radius: 4px !important;
+            width: 100% !important;
+            height: 48px !important;
             box-shadow: none !important;
         }
-        
-        /* 🛠️ Aggressive Text and Icon Scrubbing to prevent layout bleeding */
-        div[data-testid="stFileUploaderDropzone"] {
-            padding: 0 !important;
-            border: none !important;
-            background: transparent !important;
-            min-height: unset !important;
-        }
-        div[data-testid="stFileUploaderDropzone"] svg {
-            display: none !important; 
-        }
-        div[data-testid="stFileUploaderDropzone"] div {
-            display: none !important; 
-        }
-        div[data-testid="stFileUploaderFileData"] {
-            display: none !important; 
-        }
-        .stFileUploader small {
-            display: none !important; 
-        }
-        .stFileUploader label {
-            display: none !important; 
-        }
-        .stFileUploader {
-            padding-top: 10px !important;
-            display: flex !important;
-            justify-content: center !important;
-            align-items: center !important;
-        }
+        .stFileUploader { padding-top: 0px !important; }
+        footer {visibility: hidden;}
     </style>
 """, unsafe_allow_html=True)
+
+# 3. SIDEBAR CONTROL MATRIX
+with st.sidebar:
+    st.markdown("<h2 style='color: #bd00ff; font-family: monospace;'>[ GLOBAL_CTRL ]</h2>", unsafe_allow_html=True)
+    st.caption("DEPLOYMENT STATE: PRODUCTION PUBLIC LINK")
+    st.divider()
+    
+    temperature = st.slider("Creativity (Temp)", 0.1, 1.0, 0.7, 0.1)
+    
+    st.divider()
+    if st.button("⚡ FLUSH MEMORY", use_container_width=True):
+        st.session_state.cyber_history = []
+        st.rerun()
 
 # Check if the app is being run locally by you or via the public web URL
 is_local_user = st.context.headers.get("Host", "").startswith("localhost") or st.context.headers.get("Host", "").startswith("127.0.0.1")
 
-# 3. INITIALIZE DISPLAY CANVAS
+# 4. INITIALIZE DISPLAY CANVAS
 st.markdown("<h1 class='glow-title'>⚡ NEO-NET GLOBAL // INTERFACE</h1>", unsafe_allow_html=True)
 st.markdown("<p style='font-family: monospace; color: #64748b;'>CLOUD REASONING ENGINE PIPELINE: ACTIVE</p>", unsafe_allow_html=True)
 st.divider()
@@ -119,14 +95,12 @@ for message in st.session_state.cyber_history:
     with st.chat_message(message["role"], avatar=avatar):
         st.markdown(clean_display)
 
-# 4. CHAT ENTRY MATRIX (Side-by-side arrangement)
+# 5. SIDE-BY-SIDE ENTRY MATRIX
 injected_context = ""
-
-# Adjusted sizing layout (0.05 vs 0.95) to push elements nicely apart
-col1, col2 = st.columns([0.05, 0.95])
+col1, col2 = st.columns([0.07, 0.93])
 
 with col1:
-    # Minimal file picker mapping to a single isolated plus icon
+    # Compact file uploader stripped down to a dedicated row button
     uploaded_file = st.file_uploader("+", type=["txt", "py", "md"], label_visibility="collapsed")
     if uploaded_file is not None:
         try:
@@ -137,8 +111,7 @@ with col1:
             st.error(f"Error: {e}")
 
 with col2:
-    # Completely empty placeholder box
-    user_prompt = st.chat_input("")
+    user_prompt = st.chat_input("Input transmission token...")
 
 if user_prompt:
     full_processed_prompt = user_prompt + injected_context if injected_context else user_prompt
@@ -148,7 +121,6 @@ if user_prompt:
 
     with st.chat_message("assistant", avatar="⚙️"):
         try:
-            # Empty placeholders to handle live stream text formatting split
             think_container = st.empty()
             answer_container = st.empty()
             
@@ -157,7 +129,7 @@ if user_prompt:
                     stream = client.chat.completions.create(
                         model='qwen/qwen3.6-27b',
                         messages=[{"role": m["role"], "content": m["content"]} for m in st.session_state.cyber_history],
-                        temperature=0.7,
+                        temperature=temperature,
                         stream=True
                     )
                     
