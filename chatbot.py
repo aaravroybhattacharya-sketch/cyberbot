@@ -33,10 +33,6 @@ with st.sidebar:
     st.caption("DEPLOYMENT STATE: PRODUCTION PUBLIC LINK")
     st.divider()
     
-    # Secure API data lock input slot for the cloud server key
-    groq_api_key = st.text_input("🔑 ENTER MODEL ACCESS KEY:", type="password", help="Enter your Groq key.")
-    
-    st.divider()
     st.markdown("<b style='color: #bd00ff;'>📥 FILE ANALYZER:</b>", unsafe_allow_html=True)
     uploaded_file = st.file_uploader("Upload files (.txt, .py, .md)", type=["txt", "py", "md"])
     
@@ -59,15 +55,16 @@ with st.sidebar:
 
 # 4. INITIALIZE DISPLAY CANVAS
 st.markdown("<h1 class='glow-title'>⚡ NEO-NET GLOBAL // INTERFACE</h1>", unsafe_allow_html=True)
-st.markdown("<p style='font-family: monospace; color: #64748b;'>CLOUD REASONING ENGINE PIPELINE: STANDBY</p>", unsafe_allow_html=True)
+st.markdown("<p style='font-family: monospace; color: #64748b;'>CLOUD REASONING ENGINE PIPELINE: ACTIVE</p>", unsafe_allow_html=True)
 st.divider()
 
-if not groq_api_key:
-    st.warning("⚠️ ACCESS LINK DECRYPTED: Waiting for authorization sequence. Provide a model access key in the left dashboard node to wake up the engine network.")
+# Check for hidden cloud secret configuration
+if "GROQ_API_KEY" not in st.secrets:
+    st.error("❌ SYSTEM ERROR: Missing GROQ_API_KEY in cloud dashboard settings configuration.")
     st.stop()
 
-# Initialize public server engine connection
-client = Groq(api_key=groq_api_key)
+# Initialize public server engine connection using hidden environment variable
+client = Groq(api_key=st.secrets["GROQ_API_KEY"])
 
 if "cyber_history" not in st.session_state:
     st.session_state.cyber_history = [
@@ -87,17 +84,58 @@ if user_prompt := st.chat_input("Input transmission token..."):
 
     with st.chat_message("assistant", avatar="⚙️"):
         try:
+            # Empty placeholders to handle live stream text formatting split
+            think_container = st.empty()
+            answer_container = st.empty()
+            
             def response_streamer():
-                stream = client.chat.completions.create(
-                    model='llama-3.2-3b-preview',  # Meta Llama 3.2 streaming over lightning cloud servers
-                    messages=[{"role": m["role"], "content": m["content"]} for m in st.session_state.cyber_history],
-                    temperature=temperature,
-                    stream=True
-                )
-                for chunk in stream:
-                    if chunk.choices[0].delta.content:
-                        yield chunk.choices[0].delta.content
-            full_reply = st.write_stream(response_streamer())
+                try:
+                    stream = client.chat.completions.create(
+                        model='qwen/qwen3.6-27b',
+                        messages=[{"role": m["role"], "content": m["content"]} for m in st.session_state.cyber_history],
+                        temperature=temperature,
+                        stream=True
+                    )
+                    
+                    in_think_block = False
+                    think_buffer = ""
+                    
+                    for chunk in stream:
+                        # Safety check: ensure choice structure exists cleanly
+                        if not chunk.choices or len(chunk.choices) == 0:
+                            continue
+                            
+                        # 🚀 Safe Fix: Read choices array safely without explicit indices
+                        delta = chunk.choices[0].delta if hasattr(chunk.choices[0], 'delta') else chunk.choices[0]
+                        content = getattr(delta, 'content', None)
+                        
+                        # Guard against empty chunks or completion flags
+                        if content is None:
+                            continue
+                            
+                        if "<think>" in content:
+                            in_think_block = True
+                            content = content.replace("<think>", "")
+                        
+                        if "</think>" in content:
+                            in_think_block = False
+                            content = content.replace("</think>", "")
+                            # Render the finalized thinking log block nicely before the answer starts
+                            with st.expander("⚙️ [SYSTEM_LOG // REASONING_PROCESS]", expanded=False):
+                                st.code(think_buffer.strip())
+                            think_container.empty()
+                            continue
+
+                        if in_think_block:
+                            think_buffer += content
+                            think_container.markdown(f"🤖 *Thinking...*\n```text\n{think_buffer}\n```")
+                        else:
+                            yield content
+                except Exception as stream_err:
+                    # Fallback so the user gets a graceful error note instead of a code crash
+                    yield f"\n\n⚠️ [STREAM_INTERRUPTION]: Cloud stream encountered a pocket drop. Details: {str(stream_err)}"
+                            
+            full_reply = answer_container.write_stream(response_streamer())
             st.session_state.cyber_history.append({"role": "assistant", "content": full_reply})
         except Exception as e:
             st.error(f"[SYSTEM_LAUNCH_ERROR]: Cloud connection dropped. Details: {e}")
