@@ -208,7 +208,7 @@ if user_prompt:
                 except Exception as stream_err:
                     yield f"\n\n⚠️ [STREAM_INTERRUPTION]: Cloud stream encountered a pocket drop. Details: {str(stream_err)}"
                             
-            full_reply = answer_container.write_stream(response_streamer())
+                        full_reply = answer_container.write_stream(response_streamer())
             st.session_state.cyber_history.append({"role": "assistant", "content": full_reply})
         except Exception as e:
-st.error(f"[SYSTEM_LAUNCH_ERROR]: Cloud connection dropped. Details: {e}")
+            st.error(f"[SYSTEM_LAUNCH_ERROR]: Cloud connection dropped. Details: {e}")
