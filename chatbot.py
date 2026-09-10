@@ -47,7 +47,7 @@ st.markdown("""
             background: transparent !important;
             border: none !important;
             color: #ffffff !important;
-            font-size: 26px !important;
+            font-size: 28px !important;
             font-weight: bold !important;
             padding: 0 !important;
             margin: 0 !important;
@@ -56,17 +56,33 @@ st.markdown("""
             box-shadow: none !important;
         }
         
-        /* Remove default drag-drop decorative text and the 200MB size limit description */
-        .stFileUploader section {
+        /* 🛠️ Comprehensive Fix: Scrub upload icons, drag-drop text boxes, and file limits completely */
+        div[data-testid="stFileUploaderDropzone"] {
             padding: 0 !important;
             border: none !important;
             background: transparent !important;
+            min-height: unset !important;
+        }
+        div[data-testid="stFileUploaderDropzone"] svg {
+            display: none !important; /* Force hide the upload icon arrow */
+        }
+        div[data-testid="stFileUploaderDropzone"] div {
+            display: none !important; /* Force hide placeholder words like 'Upload' */
+        }
+        div[data-testid="stFileUploaderFileData"] {
+            display: none !important; /* Hide file data elements underneath */
         }
         .stFileUploader small {
-            display: none !important;
+            display: none !important; /* Hide the 200MB text string */
+        }
+        .stFileUploader label {
+            display: none !important; /* Hide label layout items */
         }
         .stFileUploader {
-            padding-top: 10px !important;
+            padding-top: 8px !important;
+            display: flex !important;
+            justify-content: center !important;
+            align-items: center !important;
         }
     </style>
 """, unsafe_allow_html=True)
@@ -104,7 +120,7 @@ for message in st.session_state.cyber_history:
 # 4. CHAT ENTRY MATRIX (Side-by-side arrangement)
 injected_context = ""
 
-# 🛠️ Fix Applied: Explicitly define the column width configuration specifier (5% width vs 95% width)
+# Setup side-by-side positioning grid with weights
 col1, col2 = st.columns([0.05, 0.95])
 
 with col1:
@@ -195,4 +211,4 @@ if user_prompt:
             full_reply = answer_container.write_stream(response_streamer())
             st.session_state.cyber_history.append({"role": "assistant", "content": full_reply})
         except Exception as e:
-            st.error(f"[SYSTEM_LAUNCH_ERROR]: Cloud connection dropped. Details: {e}")
+st.error(f"[SYSTEM_LAUNCH_ERROR]: Cloud connection dropped. Details: {e}")
