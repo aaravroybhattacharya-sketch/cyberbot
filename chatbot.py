@@ -178,7 +178,7 @@ if user_prompt:
                             initial_buffer += content
                             if "<think>" in initial_buffer:
                                 in_think_block = True
-                                                                think_buffer = initial_buffer.replace("<think>", "").strip()
+                                think_buffer = initial_buffer.replace("<think>", "").strip()
                                 initial_buffer = ""
                             continue
                         
