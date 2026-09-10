@@ -1,62 +1,52 @@
 import streamlit as st
 from groq import Groq  # Free high-performance cloud AI host
 
-# 1. PREMIUM APPARATUS LAYOUT
+# 1. PREMIUM APPARATUS LAYOUT (Sidebar collapsed by default)
 st.set_page_config(
     page_title="NEO-NET GLOBAL CORE // v6.0", 
     page_icon="🔮", 
     layout="wide",
-    initial_sidebar_state="expanded"
+    initial_sidebar_state="collapsed"
 )
 
-# 2. CYBERPUNK HUD DESIGN STYLING
+# 2. CYBERPUNK HUD DESIGN STYLING WITH SIDE-BY-SIDE CHAT BAR
 st.markdown("""
     <style>
         .stApp { background-color: #0d0f12 !important; color: #ffffff !important; }
-        section[data-testid="stSidebar"] { background-color: #11151c !important; }
-        section[data-testid="stSidebar"] * { color: #ffffff !important; }
         input { background-color: #1a1f26 !important; color: #00f0ff !important; border: 2px solid #00f0ff !important; border-radius: 4px !important; }
+        
+        /* Stylized adjustments for the side-by-side file button and inputs */
         div[data-testid="stChatInput"] textarea { color: #00f0ff !important; background-color: #1a1f26 !important; }
+        
         div[data-testid="stChatMessage"] { background-color: #13171f !important; border-left: 4px solid #00f0ff !important; border-radius: 4px 12px 12px 4px !important; margin-bottom: 15px !important; padding: 20px !important; }
         div[data-testid="stChatMessage"] p, div[data-testid="stChatMessage"] span, div[data-testid="stChatMessage"] li { color: #ffffff !important; font-size: 16px !important; }
         div[data-testid="stChatMessage"]:has(div[data-testid="stChatMessageAvatar"]):nth-child(even) { border-left: 4px solid #bd00ff !important; background-color: #17131f !important; }
         div[data-testid="stChatMessage"]:has(div[data-testid="stChatMessageAvatar"]):nth-child(even) p, div[data-testid="stChatMessage"]:has(div[data-testid="stChatMessageAvatar"]):nth-child(even) span { color: #00f0ff !important; }
         .glow-title { color: #00f0ff; text-shadow: 0 0 12px rgba(0, 240, 255, 0.6); font-family: 'Courier New', monospace; font-weight: bold; font-size: 2.5rem; }
-        div[data-testid="stFileUploadDropzone"] { background-color: #1a1f26 !important; border: 2px dashed #bd00ff !important; }
+        
+        /* Hide the native Streamlit sidebar hamburger menu and adjustments */
+        section[data-testid="stSidebar"] { display: none !important; }
         footer {visibility: hidden;}
+        
+        /* Plus button layout overrides */
+        .stFileUploader button {
+            background-color: #1a1f26 !important;
+            border: 2px solid #bd00ff !important;
+            color: #bd00ff !important;
+            border-radius: 50% !important;
+            width: 45px !important;
+            height: 45px !important;
+            font-size: 22px !important;
+            line-height: 42px !important;
+            padding: 0 !important;
+        }
     </style>
 """, unsafe_allow_html=True)
-
-# 3. SIDEBAR CONTROL MATRIX
-with st.sidebar:
-    st.markdown("<h2 style='color: #bd00ff; font-family: monospace;'>[ GLOBAL_CTRL ]</h2>", unsafe_allow_html=True)
-    st.caption("DEPLOYMENT STATE: PRODUCTION PUBLIC LINK")
-    st.divider()
-    
-    st.markdown("<b style='color: #bd00ff;'>📥 FILE ANALYZER:</b>", unsafe_allow_html=True)
-    uploaded_file = st.file_uploader("Upload files (.txt, .py, .md)", type=["txt", "py", "md"])
-    
-    injected_context = ""
-    if uploaded_file is not None:
-        try:
-            file_contents = uploaded_file.read().decode("utf-8")
-            st.success(f"✔️ {uploaded_file.name} cached!")
-            injected_context = f"\n\n[FILE DATA ({uploaded_file.name})]:\n```\n{file_contents}\n```\n"
-        except Exception as e:
-            st.error(f"Error: {e}")
-            
-    st.divider()
-    temperature = st.slider("Creativity (Temp)", 0.1, 1.0, 0.7, 0.1)
-    
-    st.divider()
-    if st.button("⚡ FLUSH MEMORY", use_container_width=True):
-        st.session_state.cyber_history = []
-        st.rerun()
 
 # Check if the app is being run locally by you or via the public web URL
 is_local_user = st.context.headers.get("Host", "").startswith("localhost") or st.context.headers.get("Host", "").startswith("127.0.0.1")
 
-# 4. INITIALIZE DISPLAY CANVAS
+# 3. INITIALIZE DISPLAY CANVAS
 st.markdown("<h1 class='glow-title'>⚡ NEO-NET GLOBAL // INTERFACE</h1>", unsafe_allow_html=True)
 st.markdown("<p style='font-family: monospace; color: #64748b;'>CLOUD REASONING ENGINE PIPELINE: ACTIVE</p>", unsafe_allow_html=True)
 st.divider()
@@ -74,16 +64,36 @@ if "cyber_history" not in st.session_state:
         {"role": "assistant", "content": "🧠 **[NEO-NET GLOBAL CORE ACTIVE]** System is now completely live. Cloud routing pipeline established successfully."}
     ]
 
+# Render chat logs
 for message in st.session_state.cyber_history:
     avatar = "🔮" if message["role"] == "user" else "⚙️"
-    # Filter history view to hide residual tags for older stored content
     clean_display = message["content"]
     if "</think>" in clean_display:
         clean_display = clean_display.split("</think>")[-1].strip()
     with st.chat_message(message["role"], avatar=avatar):
         st.markdown(clean_display)
 
-if user_prompt := st.chat_input("Input transmission token..."):
+# 4. CHAT ENTRY MATRIX (Side-by-side arrangement)
+injected_context = ""
+
+# Create two columns at the bottom for the plus icon and the text box
+col1, col2 = st.columns([1, 15])
+
+with col1:
+    # A single file uploader showing up as a compact element
+    uploaded_file = st.file_uploader("➕", type=["txt", "py", "md"], label_visibility="collapsed")
+    if uploaded_file is not None:
+        try:
+            file_contents = uploaded_file.read().decode("utf-8")
+            st.toast(f"📥 {uploaded_file.name} context cached!", icon="✔️")
+            injected_context = f"\n\n[FILE DATA ({uploaded_file.name})]:\n```\n{file_contents}\n```\n"
+        except Exception as e:
+            st.error(f"Error: {e}")
+
+with col2:
+    user_prompt = st.chat_input("Input transmission token...")
+
+if user_prompt:
     full_processed_prompt = user_prompt + injected_context if injected_context else user_prompt
     with st.chat_message("user", avatar="🔮"):
         st.markdown(f"**[TRANS_IN]:** {user_prompt}")
@@ -99,26 +109,25 @@ if user_prompt := st.chat_input("Input transmission token..."):
                     stream = client.chat.completions.create(
                         model='qwen/qwen3.6-27b',
                         messages=[{"role": m["role"], "content": m["content"]} for m in st.session_state.cyber_history],
-                        temperature=temperature,
+                        temperature=0.7,  # Temperature slider completely removed; set to a clean fallback default
                         stream=True
                     )
                     
                     in_think_block = False
                     think_buffer = ""
                     initial_buffer = ""
-                    buffer_limit = 15  # Buffer up to 15 characters to intercept structural tags cleanly
+                    buffer_limit = 15
                     
                     for chunk in stream:
                         if not chunk.choices or len(chunk.choices) == 0:
                             continue
                             
-                        delta = chunk.choices[0].delta if hasattr(chunk.choices[0], 'delta') else chunk.choices[0]
+                        delta = chunk.choices.delta if hasattr(chunk.choices, 'delta') else chunk.choices
                         content = getattr(delta, 'content', None)
                         
                         if content is None:
                             continue
                             
-                        # Step A: Feed the initial safety character buffer to stop layout flashes
                         if len(initial_buffer) < buffer_limit and not in_think_block and not think_buffer:
                             initial_buffer += content
                             if "<think>" in initial_buffer:
@@ -127,9 +136,8 @@ if user_prompt := st.chat_input("Input transmission token..."):
                                 initial_buffer = ""
                             continue
                         
-                        # Process chunks once the buffer is checked
                         current_chunk = content if not initial_buffer else (initial_buffer + content)
-                        initial_buffer = "" # Flush the safety buffer flag
+                        initial_buffer = ""
                         
                         if "<think>" in current_chunk:
                             in_think_block = True
@@ -139,7 +147,6 @@ if user_prompt := st.chat_input("Input transmission token..."):
                             in_think_block = False
                             current_chunk = current_chunk.replace("</think>", "")
                             
-                            # Step B: Secure Privacy Barrier - Only render logs if you are the host on localhost
                             if is_local_user:
                                 with st.expander("⚙️ [SYSTEM_LOG // REASONING_PROCESS]", expanded=False):
                                     st.code(think_buffer.strip())
@@ -148,7 +155,6 @@ if user_prompt := st.chat_input("Input transmission token..."):
 
                         if in_think_block:
                             think_buffer += current_chunk
-                            # Only display live status panels locally
                             if is_local_user:
                                 think_container.markdown(f"🤖 *Thinking...*\n```text\n{think_buffer}\n```")
                         else:
