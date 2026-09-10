@@ -178,7 +178,7 @@ if user_prompt:
                             initial_buffer += content
                             if "<think>" in initial_buffer:
                                 in_think_block = True
-                                think_buffer = initial_buffer.replace("<think>", "").strip()
+                                                                think_buffer = initial_buffer.replace("<think>", "").strip()
                                 initial_buffer = ""
                             continue
                         
@@ -206,7 +206,7 @@ if user_prompt:
                         else:
                             yield current_chunk
                             
-                                except Exception as stream_err:
+                except Exception as stream_err:
                     yield f"\n\n⚠️ [STREAM_INTERRUPTION]: Cloud stream encountered a pocket drop. Details: {str(stream_err)}"
                             
             full_reply = answer_container.write_stream(response_streamer())
