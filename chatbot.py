@@ -26,28 +26,30 @@ st.markdown("""
         div[data-testid="stChatMessage"]:has(div[data-testid="stChatMessageAvatar"]):nth-child(even) { border-left: 4px solid #bd00ff !important; background-color: #17131f !important; }
         div[data-testid="stChatMessage"]:has(div[data-testid="stChatMessageAvatar"]):nth-child(even) p, div[data-testid="stChatMessage"]:has(div[data-testid="stChatMessageAvatar"]):nth-child(even) span { color: #00f0ff !important; }
         
-        /* 🎨 DARK BORDERLESS ATTRACTIVE CHATBAR OVERRIDES */
+        /* 🎨 THE ATTRACIVE SLATE-GRAY BORDERLESS CHATBAR */
         div[data-testid="stChatInput"] {
-            background-color: #1a1f26 !important;
+            background-color: #1e2530 !important;
             border: none !important;
             border-radius: 24px !important;
             box-shadow: none !important;
             padding: 4px 12px !important;
         }
         
+        /* Force user text to be bright white, clean, and 100% visible */
         div[data-testid="stChatInput"] textarea {
             color: #ffffff !important; 
             background-color: transparent !important;
             border: none !important;
             box-shadow: none !important;
+            font-size: 16px !important;
         }
         
-        /* ➕ MINIMALIST PLUS BUTTON OVERRIDES */
+        /* ➕ CLEAN PLUS BUTTON OVERRIDES */
         .stFileUploader button {
             background: transparent !important;
             border: none !important;
             color: #ffffff !important;
-            font-size: 28px !important;
+            font-size: 26px !important;
             font-weight: bold !important;
             padding: 0 !important;
             margin: 0 !important;
@@ -56,7 +58,7 @@ st.markdown("""
             box-shadow: none !important;
         }
         
-        /* 🛠️ Comprehensive Fix: Scrub upload icons, drag-drop text boxes, and file limits completely */
+        /* 🛠️ Aggressive Text and Icon Scrubbing to prevent layout bleeding */
         div[data-testid="stFileUploaderDropzone"] {
             padding: 0 !important;
             border: none !important;
@@ -64,22 +66,22 @@ st.markdown("""
             min-height: unset !important;
         }
         div[data-testid="stFileUploaderDropzone"] svg {
-            display: none !important; /* Force hide the upload icon arrow */
+            display: none !important; 
         }
         div[data-testid="stFileUploaderDropzone"] div {
-            display: none !important; /* Force hide placeholder words like 'Upload' */
+            display: none !important; 
         }
         div[data-testid="stFileUploaderFileData"] {
-            display: none !important; /* Hide file data elements underneath */
+            display: none !important; 
         }
         .stFileUploader small {
-            display: none !important; /* Hide the 200MB text string */
+            display: none !important; 
         }
         .stFileUploader label {
-            display: none !important; /* Hide label layout items */
+            display: none !important; 
         }
         .stFileUploader {
-            padding-top: 8px !important;
+            padding-top: 10px !important;
             display: flex !important;
             justify-content: center !important;
             align-items: center !important;
@@ -120,7 +122,7 @@ for message in st.session_state.cyber_history:
 # 4. CHAT ENTRY MATRIX (Side-by-side arrangement)
 injected_context = ""
 
-# Setup side-by-side positioning grid with weights
+# Adjusted sizing layout (0.05 vs 0.95) to push elements nicely apart
 col1, col2 = st.columns([0.05, 0.95])
 
 with col1:
@@ -135,7 +137,7 @@ with col1:
             st.error(f"Error: {e}")
 
 with col2:
-    # Set placeholder text to an empty string layout configuration
+    # Completely empty placeholder box
     user_prompt = st.chat_input("")
 
 if user_prompt:
