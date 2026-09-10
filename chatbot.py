@@ -1,7 +1,7 @@
 import streamlit as st
 from groq import Groq  # Free high-performance cloud AI host
 
-# 1. PREMIUM APPARATUS LAYOUT (Sidebar collapsed by default)
+# 1. PREMIUM APPARATUS LAYOUT
 st.set_page_config(
     page_title="NEO-NET GLOBAL CORE // v6.0", 
     page_icon="🔮", 
@@ -9,36 +9,61 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# 2. CYBERPUNK HUD DESIGN STYLING WITH SIDE-BY-SIDE CHAT BAR
+# 2. CHATGPT-STYLE COMPACT BAR AND MULTI-THEME CSS
 st.markdown("""
     <style>
         .stApp { background-color: #0d0f12 !important; color: #ffffff !important; }
-        input { background-color: #1a1f26 !important; color: #00f0ff !important; border: 2px solid #00f0ff !important; border-radius: 4px !important; }
         
-        /* Stylized adjustments for the side-by-side file button and inputs */
-        div[data-testid="stChatInput"] textarea { color: #00f0ff !important; background-color: #1a1f26 !important; }
+        /* Remove the native Streamlit sidebar hamburger menu and headers */
+        section[data-testid="stSidebar"] { display: none !important; }
+        footer {visibility: hidden;}
         
+        .glow-title { color: #00f0ff; text-shadow: 0 0 12px rgba(0, 240, 255, 0.6); font-family: 'Courier New', monospace; font-weight: bold; font-size: 2.5rem; }
+        
+        /* Chat bubble styles */
         div[data-testid="stChatMessage"] { background-color: #13171f !important; border-left: 4px solid #00f0ff !important; border-radius: 4px 12px 12px 4px !important; margin-bottom: 15px !important; padding: 20px !important; }
         div[data-testid="stChatMessage"] p, div[data-testid="stChatMessage"] span, div[data-testid="stChatMessage"] li { color: #ffffff !important; font-size: 16px !important; }
         div[data-testid="stChatMessage"]:has(div[data-testid="stChatMessageAvatar"]):nth-child(even) { border-left: 4px solid #bd00ff !important; background-color: #17131f !important; }
         div[data-testid="stChatMessage"]:has(div[data-testid="stChatMessageAvatar"]):nth-child(even) p, div[data-testid="stChatMessage"]:has(div[data-testid="stChatMessageAvatar"]):nth-child(even) span { color: #00f0ff !important; }
-        .glow-title { color: #00f0ff; text-shadow: 0 0 12px rgba(0, 240, 255, 0.6); font-family: 'Courier New', monospace; font-weight: bold; font-size: 2.5rem; }
         
-        /* Hide the native Streamlit sidebar hamburger menu and adjustments */
-        section[data-testid="stSidebar"] { display: none !important; }
-        footer {visibility: hidden;}
+        /* 🎨 THE ATTRACTIVE BORDERLESS CHATBAR OVERRIDES */
+        div[data-testid="stChatInput"] {
+            background-color: #1e2530 !important;
+            border: none !important;
+            border-radius: 24px !important;
+            box-shadow: none !important;
+            padding: 4px 12px !important;
+        }
         
-        /* Plus button layout overrides */
+        div[data-testid="stChatInput"] textarea {
+            color: #ffffff !important; 
+            background-color: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+        }
+        
+        /* ➕ MINIMALIST PLUS BUTTON OVERRIDES */
         .stFileUploader button {
-            background-color: #1a1f26 !important;
-            border: 2px solid #bd00ff !important;
-            color: #bd00ff !important;
-            border-radius: 50% !important;
-            width: 45px !important;
-            height: 45px !important;
-            font-size: 22px !important;
-            line-height: 42px !important;
+            background: transparent !important;
+            border: none !important;
+            color: #ffffff !important;
+            font-size: 26px !important;
+            font-weight: bold !important;
             padding: 0 !important;
+            margin: 0 !important;
+            width: auto !important;
+            height: auto !important;
+            box-shadow: none !important;
+        }
+        
+        /* Remove default drag-drop decorative text underneath the plus symbol */
+        .stFileUploader section {
+            padding: 0 !important;
+            border: none !important;
+            background: transparent !important;
+        }
+        .stFileUploader {
+            padding-top: 10px !important;
         }
     </style>
 """, unsafe_allow_html=True)
@@ -76,12 +101,12 @@ for message in st.session_state.cyber_history:
 # 4. CHAT ENTRY MATRIX (Side-by-side arrangement)
 injected_context = ""
 
-# Create two columns at the bottom for the plus icon and the text box
+# Setup side-by-side positioning grid
 col1, col2 = st.columns([1, 15])
 
 with col1:
-    # A single file uploader showing up as a compact element
-    uploaded_file = st.file_uploader("➕", type=["txt", "py", "md"], label_visibility="collapsed")
+    # Minimal file picker mapping to a single isolated plus icon
+    uploaded_file = st.file_uploader("+", type=["txt", "py", "md"], label_visibility="collapsed")
     if uploaded_file is not None:
         try:
             file_contents = uploaded_file.read().decode("utf-8")
@@ -109,7 +134,7 @@ if user_prompt:
                     stream = client.chat.completions.create(
                         model='qwen/qwen3.6-27b',
                         messages=[{"role": m["role"], "content": m["content"]} for m in st.session_state.cyber_history],
-                        temperature=0.7,  # Temperature slider completely removed; set to a clean fallback default
+                        temperature=0.7,
                         stream=True
                     )
                     
