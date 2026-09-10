@@ -36,6 +36,9 @@ st.markdown("""
         .stFileUploader small { display: none !important; }
         .stFileUploader label { display: none !important; }
         
+        /* 🛠️ Comprehensive Fix: Scrub any lingering hidden text nodes */
+        div[data-testid="stWidgetLabel"] { display: none !important; }
+        
         .stFileUploader button {
             background: #1a1f26 !important;
             border: 2px solid #bd00ff !important;
