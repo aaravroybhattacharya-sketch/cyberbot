@@ -104,8 +104,8 @@ for message in st.session_state.cyber_history:
 # 4. CHAT ENTRY MATRIX (Side-by-side arrangement)
 injected_context = ""
 
-# Setup side-by-side positioning grid
-col1, col2 = st.columns()
+# 🛠️ Fix Applied: Explicitly define the column width configuration specifier (5% width vs 95% width)
+col1, col2 = st.columns([0.05, 0.95])
 
 with col1:
     # Minimal file picker mapping to a single isolated plus icon
