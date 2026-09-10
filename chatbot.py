@@ -26,9 +26,9 @@ st.markdown("""
         div[data-testid="stChatMessage"]:has(div[data-testid="stChatMessageAvatar"]):nth-child(even) { border-left: 4px solid #bd00ff !important; background-color: #17131f !important; }
         div[data-testid="stChatMessage"]:has(div[data-testid="stChatMessageAvatar"]):nth-child(even) p, div[data-testid="stChatMessage"]:has(div[data-testid="stChatMessageAvatar"]):nth-child(even) span { color: #00f0ff !important; }
         
-        /* 🎨 THE ATTRACTIVE BORDERLESS CHATBAR OVERRIDES */
+        /* 🎨 DARK BORDERLESS ATTRACTIVE CHATBAR OVERRIDES */
         div[data-testid="stChatInput"] {
-            background-color: #1e2530 !important;
+            background-color: #1a1f26 !important;
             border: none !important;
             border-radius: 24px !important;
             box-shadow: none !important;
@@ -56,11 +56,14 @@ st.markdown("""
             box-shadow: none !important;
         }
         
-        /* Remove default drag-drop decorative text underneath the plus symbol */
+        /* Remove default drag-drop decorative text and the 200MB size limit description */
         .stFileUploader section {
             padding: 0 !important;
             border: none !important;
             background: transparent !important;
+        }
+        .stFileUploader small {
+            display: none !important;
         }
         .stFileUploader {
             padding-top: 10px !important;
@@ -102,7 +105,7 @@ for message in st.session_state.cyber_history:
 injected_context = ""
 
 # Setup side-by-side positioning grid
-col1, col2 = st.columns([1, 15])
+col1, col2 = st.columns()
 
 with col1:
     # Minimal file picker mapping to a single isolated plus icon
@@ -116,7 +119,8 @@ with col1:
             st.error(f"Error: {e}")
 
 with col2:
-    user_prompt = st.chat_input("Input transmission token...")
+    # Set placeholder text to an empty string layout configuration
+    user_prompt = st.chat_input("")
 
 if user_prompt:
     full_processed_prompt = user_prompt + injected_context if injected_context else user_prompt
