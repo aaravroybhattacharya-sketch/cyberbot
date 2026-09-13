@@ -150,7 +150,7 @@ if user_prompt:
         try:
             think_container = st.empty()
             answer_container = st.empty()
-                        def response_streamer():
+                    def response_streamer():
                 # Smart Implementation: Retry loop protects from sudden 429 rate cuts
                 max_retries = 3
                 for attempt in range(max_retries):
