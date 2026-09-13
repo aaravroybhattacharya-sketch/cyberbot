@@ -1,5 +1,7 @@
 import streamlit as st
-from groq import Groq  # Free high-performance cloud AI host
+from groq import Groq  
+import time  # Added for rate-limit pause intervals
+
 
 # 1. PREMIUM APPARATUS LAYOUT
 st.set_page_config(
@@ -100,7 +102,13 @@ if "GROQ_API_KEY" not in st.secrets:
 # Initialize public server engine connection using hidden environment variable
 client = Groq(api_key=st.secrets["GROQ_API_KEY"])
 
+# Bug Fix: Auto-clear deadlocked memory loops if URL contains parameter instructions
+if st.query_params.get("clear") == "true":
+    st.session_state.cyber_history = []
+    st.query_params.clear()
+
 if "cyber_history" not in st.session_state:
+
     st.session_state.cyber_history = [
         {"role": "assistant", "content": "🧠 **[NEO-NET GLOBAL CORE ACTIVE]** System is now completely live. Cloud routing pipeline established successfully."}
     ]
@@ -142,67 +150,31 @@ if user_prompt:
         try:
             think_container = st.empty()
             answer_container = st.empty()
-            
-            def response_streamer():
-                try:
-                    stream = client.chat.completions.create(
-                        model='qwen/qwen3.6-27b',  # 🚀 Best overall reasoning model replacement
-                        messages=[{"role": m["role"], "content": m["content"]} for m in st.session_state.cyber_history],
-                        temperature=temperature,
-                        max_tokens=500,  
-                        stream=True
-)
+                        def response_streamer():
+                # Smart Implementation: Retry loop protects from sudden 429 rate cuts
+                max_retries = 3
+                for attempt in range(max_retries):
+                    try:
+                        stream = client.chat.completions.create(
+                            model='llama-3.3-70b-versatile',  # Upgraded to the absolute smartest model
+                            messages=[{"role": m["role"], "content": m["content"]} for m in st.session_state.cyber_history],
+                            temperature=temperature,
+                            max_tokens=400,  # Tight token reserve prevents model size calculation errors
+                            stream=True
+                        )
+                        for chunk in stream:
+                            if chunk.choices and len(chunk.choices) > 0:
+                                content = chunk.choices.delta.content if hasattr(chunk.choices, 'delta') else chunk.choices.delta.content
+                                if content is not None:
+                                    yield content
+                        return  # Break loop if streaming completes successfully
+                    except Exception as err:
+                        if "429" in str(err) and attempt < max_retries - 1:
+                            time.sleep(2)  # Wait 2 seconds for the network rate limit windows to clear
+                            continue
+                        yield f"\n\n⚠️ [STREAM_INTERRUPTION]: Cloud core dropped packages. Details: {str(err)}"
+                        return
 
-                    
-                    in_think_block = False
-                    think_buffer = ""
-                    initial_buffer = ""
-                    buffer_limit = 15
-                    
-                    for chunk in stream:
-                        if not chunk.choices or len(chunk.choices) == 0:
-                            continue
-                            
-                        delta = chunk.choices.delta if hasattr(chunk.choices, 'delta') else chunk.choices
-                        content = getattr(delta, 'content', None)
-                        
-                        if content is None:
-                            continue
-                            
-                        if len(initial_buffer) < buffer_limit and not in_think_block and not think_buffer:
-                            initial_buffer += content
-                            if "<think>" in initial_buffer:
-                                in_think_block = True
-                                think_buffer = initial_buffer.replace("<think>", "").strip()
-                                initial_buffer = ""
-                            continue
-                        
-                        current_chunk = content if not initial_buffer else (initial_buffer + content)
-                        initial_buffer = ""
-                        
-                        if "<think>" in current_chunk:
-                            in_think_block = True
-                            current_chunk = current_chunk.replace("<think>", "")
-                        
-                        if "</think>" in current_chunk:
-                            in_think_block = False
-                            current_chunk = current_chunk.replace("</think>", "")
-                            
-                            if is_local_user:
-                                with st.expander("⚙️ [SYSTEM_LOG // REASONING_PROCESS]", expanded=False):
-                                    st.code(think_buffer.strip())
-                            think_container.empty()
-                            continue
-
-                        if in_think_block:
-                            think_buffer += current_chunk
-                            if is_local_user:
-                                think_container.markdown(f"🤖 *Thinking...*\n```text\n{think_buffer}\n```")
-                        else:
-                            yield current_chunk
-                            
-                except Exception as stream_err:
-                    yield f"\n\n⚠️ [STREAM_INTERRUPTION]: Cloud stream encountered a pocket drop. Details: {str(stream_err)}"
                             
             full_reply = answer_container.write_stream(response_streamer())
             st.session_state.cyber_history.append({"role": "assistant", "content": full_reply})
