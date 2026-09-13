@@ -146,10 +146,10 @@ if user_prompt:
             def response_streamer():
                 try:
                     stream = client.chat.completions.create(
-                        model='qwen-2.5-coder-32b',  # <-- FIX: Changed to an active Groq model ID
+                        model='llama-3.3-70b-versatile',  # 🚀 Best overall reasoning model replacement
                         messages=[{"role": m["role"], "content": m["content"]} for m in st.session_state.cyber_history],
                         temperature=temperature,
-                        max_tokens=500,
+                        max_tokens=500,  
                         stream=True
 )
 
