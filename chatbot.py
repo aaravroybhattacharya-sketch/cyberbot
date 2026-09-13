@@ -146,7 +146,7 @@ if user_prompt:
             def response_streamer():
                 try:
                     stream = client.chat.completions.create(
-                        model='llama-3.3-70b-versatile',  # 🚀 Best overall reasoning model replacement
+                        model='qwen/qwen3.6-27b',  # 🚀 Best overall reasoning model replacement
                         messages=[{"role": m["role"], "content": m["content"]} for m in st.session_state.cyber_history],
                         temperature=temperature,
                         max_tokens=500,  
