@@ -146,33 +146,39 @@ if user_prompt:
         st.markdown(f"**[TRANS_IN]:** {user_prompt}")
     st.session_state.cyber_history.append({"role": "user", "content": full_processed_prompt})
 
-    with st.chat_message("assistant", avatar="⚙️"):
+        with st.chat_message("assistant", avatar="⚙️"):
         try:
-            think_container = st.empty()
             answer_container = st.empty()
-                    def response_streamer():
-                # Smart Implementation: Retry loop protects from sudden 429 rate cuts
+            
+            def response_streamer():
                 max_retries = 3
                 for attempt in range(max_retries):
                     try:
                         stream = client.chat.completions.create(
-                            model='llama-3.3-70b-versatile',  # Upgraded to the absolute smartest model
+                            model='llama-3.3-70b-versatile',
                             messages=[{"role": m["role"], "content": m["content"]} for m in st.session_state.cyber_history],
                             temperature=temperature,
-                            max_tokens=400,  # Tight token reserve prevents model size calculation errors
+                            max_tokens=400,
                             stream=True
                         )
                         for chunk in stream:
                             if chunk.choices and len(chunk.choices) > 0:
-                                content = chunk.choices.delta.content if hasattr(chunk.choices, 'delta') else chunk.choices.delta.content
+                                content = chunk.choices[delta].content if hasattr(chunk.choices, 'delta') else chunk.choices.delta.content
                                 if content is not None:
                                     yield content
-                        return  # Break loop if streaming completes successfully
+                        return
                     except Exception as err:
                         if "429" in str(err) and attempt < max_retries - 1:
-                            time.sleep(2)  # Wait 2 seconds for the network rate limit windows to clear
+                            time.sleep(2)
                             continue
                         yield f"\n\n⚠️ [STREAM_INTERRUPTION]: Cloud core dropped packages. Details: {str(err)}"
+                        return
+                            
+            full_reply = answer_container.write_stream(response_streamer())
+            st.session_state.cyber_history.append({"role": "assistant", "content": full_reply})
+        except Exception as e:
+            st.error(f"[SYSTEM_LAUNCH_ERROR]: Cloud connection dropped. Details: {e}")
+
                         return
 
                             
