@@ -133,6 +133,7 @@ if user_prompt:
                         model='qwen/qwen3.6-27b',
                         messages=[{"role": m["role"], "content": m["content"]} for m in st.session_state.cyber_history],
                         temperature=temperature,
+                        max_tokens=500,
                         stream=True
                     )
                     
