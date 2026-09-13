@@ -39,19 +39,35 @@ st.markdown("""
         /* 🛠️ Comprehensive Fix: Scrub any lingering hidden text nodes */
         div[data-testid="stWidgetLabel"] { display: none !important; }
         
-        .stFileUploader button {
-            background: #1a1f26 !important;
-            border: 2px solid #bd00ff !important;
-            color: #00f0ff !important;
-            font-size: 20px !important;
-            font-weight: bold !important;
-            border-radius: 4px !important;
-            width: 100% !important;
-            height: 48px !important;
-            box-shadow: none !important;
-        }
-        .stFileUploader { padding-top: 0px !important; }
-        footer {visibility: hidden;}
+        /* 🛠️ Comprehensive Fix: Universal selector overrides to hide all default layout clutter */
+div[data-testid="stFileUploaderDropzone"] * { 
+    display: none !important; 
+}
+
+.stFileUploader button {
+    background: #1a1f26 !important;
+    border: 2px solid #bd00ff !important;
+    color: #00f0ff !important;
+    font-size: 20px !important;
+    font-weight: bold !important;
+    border-radius: 4px !important;
+    width: 100% !important;
+    height: 48px !important;
+    box-shadow: none !important;
+    display: flex !important; 
+    justify-content: center !important;
+    align-items: center !important;
+}
+
+/* Explicitly force the inner text nodes (+ symbol) inside the button block to render */
+.stFileUploader button * { 
+    display: inline-block !important; 
+}
+
+.stFileUploader { 
+    padding-top: 0px !important; 
+}
+
     </style>
 """, unsafe_allow_html=True)
 
@@ -114,7 +130,7 @@ with col1:
             st.error(f"Error: {e}")
 
 with col2:
-    user_prompt = st.chat_input("Input transmission token...")
+    user_prompt = st.chat_input("")
 
 if user_prompt:
     full_processed_prompt = user_prompt + injected_context if injected_context else user_prompt
