@@ -146,12 +146,13 @@ if user_prompt:
             def response_streamer():
                 try:
                     stream = client.chat.completions.create(
-                        model='qwen/qwen3.6-27b',
+                        model='qwen-2.5-coder-32b',  # <-- FIX: Changed to an active Groq model ID
                         messages=[{"role": m["role"], "content": m["content"]} for m in st.session_state.cyber_history],
                         temperature=temperature,
                         max_tokens=500,
                         stream=True
-                    )
+)
+
                     
                     in_think_block = False
                     think_buffer = ""
