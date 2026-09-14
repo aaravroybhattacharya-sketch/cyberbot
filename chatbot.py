@@ -179,7 +179,7 @@ if user_prompt:
         except Exception as e:
             st.error(f"[SYSTEM_LAUNCH_ERROR]: Cloud connection dropped. Details: {e}")
 
-                        return
+                    return
 
                             
             full_reply = answer_container.write_stream(response_streamer())
