@@ -1,6 +1,7 @@
 import streamlit as st
 from groq import Groq  # Free high-performance cloud AI host
 import time  # Added for rate-limit pause intervals
+import re  # 🧠 Added to cleanly filter out hidden reasoning blocks
 
 # 1. PREMIUM APPARATUS LAYOUT
 st.set_page_config(
@@ -87,7 +88,7 @@ if "GROQ_API_KEY" not in st.secrets:
 # Initialize public server engine connection using hidden environment variable
 client = Groq(api_key=st.secrets["GROQ_API_KEY"])
 
-# Bug Fix: Auto-clear deadlocked memory loops if URL contains parameter instructions
+# Auto-clear deadlocked memory loops if URL contains parameter instructions
 if st.query_params.get("clear") == "true":
     st.session_state.cyber_history = []
     st.query_params.clear()
@@ -101,10 +102,11 @@ if "cyber_history" not in st.session_state:
 for message in st.session_state.cyber_history:
     avatar = "🔮" if message["role"] == "user" else "⚙️"
     clean_display = message["content"]
-    if "</think>" in clean_display:
-        clean_display = clean_display.split("</think>")[-1].strip()
+    # Deep scrub saved history items to ensure clean loading layouts
+    clean_display = re.sub(r'<think>.*?</think>', '', clean_display, flags=re.DOTALL)
+    clean_display = re.sub(r'<think>.*', '', clean_display, flags=re.DOTALL)
     with st.chat_message(message["role"], avatar=avatar):
-        st.markdown(clean_display)
+        st.markdown(clean_display.strip())
 
 # 5. SIDE-BY-SIDE ENTRY MATRIX
 injected_context = ""
@@ -138,41 +140,32 @@ if user_prompt:
                 for attempt in range(max_retries):
                     try:
                         stream = client.chat.completions.create(
-                            model='qwen/qwen3.6-27b',  
+                            model='qwen/qwen3.6-27b',  # 👑 Back to the absolute smartest reasoning model
                             messages=[{"role": m["role"], "content": m["content"]} for m in st.session_state.cyber_history],
                             temperature=temperature,
                             max_tokens=400,
                             stream=True
                         )
                         
-                        text_accumulator = ""
-                        has_filtered_think = False
+                        full_response_text = ""
+                        last_displayed_length = 0
                         
                         for chunk in stream:
                             if chunk.choices and len(chunk.choices) > 0:
-                                first_choice = chunk.choices[0]
-                                delta = first_choice.delta if hasattr(first_choice, 'delta') else first_choice
+                                delta = chunk.choices.delta
                                 content = getattr(delta, 'content', None)
-                                
                                 if content is not None:
-                                    text_accumulator += content
+                                    full_response_text += content
                                     
-                                    # Wait until the structural reasoning text block completes
-                                    if "</think>" in text_accumulator:
-                                        # Slice the text accumulator to isolate the actual answer block
-                                        text_accumulator = text_accumulator.split("</think>")[-1]
-                                        has_filtered_think = True
-                                        continue
+                                    # 🚀 Fix: Strip out anything inside <think> tags instantly using regex patterns
+                                    clean_text = re.sub(r'<think>.*?</think>', '', full_response_text, flags=re.DOTALL)
+                                    clean_text = re.sub(r'<think>.*', '', clean_text, flags=re.DOTALL)
                                     
-                                    # If the model didn't emit a <think> tag or we have already passed it, stream out immediately
-                                    if has_filtered_think or ("<think>" not in text_accumulator and len(text_accumulator) > 10):
-                                        if text_accumulator:
-                                            yield text_accumulator
-                                            text_accumulator = ""
-                        
-                        # Yield any remaining text tokens
-                        if text_accumulator and "<think>" not in text_accumulator:
-                            yield text_accumulator
+                                    # Only stream out the newly added content tokens to prevent repeating characters
+                                    if len(clean_text) > last_displayed_length:
+                                        new_content = clean_text[last_displayed_length:]
+                                        last_displayed_length = len(clean_text)
+                                        yield new_content
                         return
                         
                     except Exception as err:
