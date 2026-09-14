@@ -146,7 +146,7 @@ if user_prompt:
         st.markdown(f"**[TRANS_IN]:** {user_prompt}")
     st.session_state.cyber_history.append({"role": "user", "content": full_processed_prompt})
 
-        with st.chat_message("assistant", avatar="⚙️"):
+    with st.chat_message("assistant", avatar="⚙️"):
         try:
             answer_container = st.empty()
             
