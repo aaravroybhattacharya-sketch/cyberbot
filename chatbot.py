@@ -88,15 +88,12 @@ if "GROQ_API_KEY" not in st.secrets:
 # Initialize public server engine connection using hidden environment variable
 client = Groq(api_key=st.secrets["GROQ_API_KEY"])
 
-# Auto-clear deadlocked memory loops if URL contains parameter instructions
-if st.query_params.get("clear") == "true":
-    st.session_state.cyber_history = []
-    st.query_params.clear()
-
+# Multi-User Isolation: Store chat arrays directly into isolated browser tab session state
 if "cyber_history" not in st.session_state:
     st.session_state.cyber_history = [
         {"role": "assistant", "content": "🧠 **[NEO-NET GLOBAL CORE ACTIVE]** System is now completely live. Cloud routing pipeline established successfully."}
     ]
+
 
 # Render chat logs
 for message in st.session_state.cyber_history:
@@ -142,8 +139,19 @@ if user_prompt:
     with st.chat_message("assistant", avatar="⚙️"):
         try:
             answer_container = st.empty()
-            
+
+            # 🛠️ AUTO-SCROLLER INJECTOR: Pushes viewport down smoothly while token streaming runs
+            js_scroller = st.components.v1.html("""
+                <script>
+                    window.parent.document.querySelector('section.main').scrollTo({
+                        top: window.parent.document.querySelector('section.main').scrollHeight,
+                        behavior: 'smooth'
+                    });
+                </script>
+            """, height=0)
+
             def response_streamer():
+
                 max_retries = 3
                 for attempt in range(max_retries):
                     try:
@@ -180,8 +188,9 @@ if user_prompt:
                         
                     except Exception as err:
                         if "429" in str(err) and attempt < max_retries - 1:
-                            time.sleep(2)
+                            time.sleep(2.5)  
                             continue
+
                         yield f"\n\n⚠️ [STREAM_INTERRUPTION]: Cloud core dropped packages. Details: {str(err)}"
                         return
                             
