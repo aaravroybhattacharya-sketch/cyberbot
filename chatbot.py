@@ -166,8 +166,10 @@ if user_prompt:
                         
                         for chunk in stream:
                             if chunk.choices and len(chunk.choices) > 0:
+                                # 🚀 Fixed: Explicitly target the first element of the choices array [0]
                                 first_choice = chunk.choices[0]
                                 delta = first_choice.delta if hasattr(first_choice, 'delta') else first_choice
+
                                 content = getattr(delta, 'content', None)
                                 if content is not None:
                                     # If the model initiates a reasoning sequence, set flag to mute output
