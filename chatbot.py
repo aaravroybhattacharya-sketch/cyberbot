@@ -162,10 +162,14 @@ if user_prompt:
                             stream=True
                         )
                         for chunk in stream:
+                            # 🚀 Smart Fix: Verify structure and index securely into first choices list element
                             if chunk.choices and len(chunk.choices) > 0:
-                                content = chunk.choices[delta].content if hasattr(chunk.choices, 'delta') else chunk.choices.delta.content
+                                first_choice = chunk.choices[0]
+                                delta = first_choice.delta if hasattr(first_choice, 'delta') else first_choice
+                                content = getattr(delta, 'content', None)
                                 if content is not None:
                                     yield content
+
                         return
                     except Exception as err:
                         if "429" in str(err) and attempt < max_retries - 1:
