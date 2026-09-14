@@ -108,9 +108,17 @@ for message in st.session_state.cyber_history:
     with st.chat_message(message["role"], avatar=avatar):
         st.markdown(clean_display.strip())
 
-# 5. SIDE-BY-SIDE ENTRY MATRIX
+# 5. SIDE-BY-SIDE ENTRY MATRIX (Pinned to the absolute bottom viewport layout)
+st.markdown("<div class='bottom-chatbar-frame'>", unsafe_allow_html=True)
+
 injected_context = ""
 col1, col2 = st.columns([0.07, 0.93])
+
+with col1:
+    ...
+
+st.markdown("</div>", unsafe_allow_html=True)
+
 
 with col1:
     uploaded_file = st.file_uploader("+", type=["txt", "py", "md"], label_visibility="collapsed")
