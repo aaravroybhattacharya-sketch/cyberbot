@@ -178,11 +178,3 @@ if user_prompt:
             st.session_state.cyber_history.append({"role": "assistant", "content": full_reply})
         except Exception as e:
             st.error(f"[SYSTEM_LAUNCH_ERROR]: Cloud connection dropped. Details: {e}")
-
-                    return
-
-                            
-            full_reply = answer_container.write_stream(response_streamer())
-            st.session_state.cyber_history.append({"role": "assistant", "content": full_reply})
-        except Exception as e:
-            st.error(f"[SYSTEM_LAUNCH_ERROR]: Cloud connection dropped. Details: {e}")
