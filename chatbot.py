@@ -102,8 +102,8 @@ for message in st.session_state.cyber_history:
     with st.chat_message(message["role"], avatar=avatar):
         st.markdown(clean_display.strip())
 
-# 5. LIVE AUTO-SCROLLER UTILITY ENGINE (Monitors elements and forces scroll updates)
-st.components.v1.html("""
+# 5. LIVE AUTO-SCROLLER UTILITY ENGINE (Using native 2026 st.html wrapper to run mutation monitoring safely)
+st.html("""
     <script>
         const scrollTarget = window.parent.document.querySelector('.main .block-container');
         const scrollContainer = window.parent.document.querySelector('.main');
@@ -118,7 +118,7 @@ st.components.v1.html("""
             observer.observe(scrollTarget, { childList: true, subtree: true });
         }
     </script>
-""", height=0)
+""")
 
 # 6. NATIVE STREAMLIT FIXED BOTTOM INPUT CONTAINERBAR
 user_prompt = st.chat_input("Send a message...")
