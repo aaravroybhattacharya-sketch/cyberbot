@@ -161,14 +161,30 @@ if user_prompt:
                             max_tokens=400,
                             stream=True
                         )
+                        # 🛠️ Structural Fix: Intercept and hide internal reasoning monologue blocks completely
+                        in_think_block = False
+                        
                         for chunk in stream:
-                            # 🚀 Smart Fix: Verify structure and index securely into first choices list element
                             if chunk.choices and len(chunk.choices) > 0:
                                 first_choice = chunk.choices[0]
                                 delta = first_choice.delta if hasattr(first_choice, 'delta') else first_choice
                                 content = getattr(delta, 'content', None)
                                 if content is not None:
-                                    yield content
+                                    # If the model initiates a reasoning sequence, set flag to mute output
+                                    if "<think>" in content:
+                                        in_think_block = True
+                                        content = content.replace("<think>", "")
+                                    
+                                    # Once reasoning finishes, release the block flag and continue
+                                    if "</think>" in content:
+                                        in_think_block = False
+                                        content = content.replace("</think>", "")
+                                        continue
+                                        
+                                    # Only stream characters to the user screen if we are OUTSIDE the think tags
+                                    if not in_think_block and content:
+                                        yield content
+
 
                         return
                     except Exception as err:
