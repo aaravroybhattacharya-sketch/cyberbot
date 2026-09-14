@@ -8,28 +8,30 @@ st.set_page_config(
     page_title="NEO-NET GLOBAL CORE // v6.0", 
     page_icon="🔮", 
     layout="wide",
-    initial_sidebar_state="collapsed"
+    initial_sidebar_state="expanded"
 )
 
-# 2. CYBERPUNK HUD DESIGN STYLING WITH NATIVE BOTTOM CHATBAR PINNING
+# 2. CYBERPUNK HUD DESIGN STYLING WITH SOLID BLACK TEXT BAR INJECTION
 st.markdown("""
     <style>
         .stApp { background-color: #0d0f12 !important; color: #ffffff !important; }
         section[data-testid="stSidebar"] { background-color: #11151c !important; }
         section[data-testid="stSidebar"] * { color: #ffffff !important; }
         
-        /* 🎨 STYLING FOR THE NATIVE BOTTOM FIXED CHAT INPUT BAR */
+        /* 🎨 STYLING FOR THE BOTTOM PINNED CHAT BAR WITH BLACK TEXT INJECTION */
         div[data-testid="stChatInput"] {
-            background-color: #1a1f26 !important;
+            background-color: #e2e8f0 !important; /* Lighter background canvas layer */
             border: 2px solid #bd00ff !important;
             border-radius: 24px !important;
             padding: 4px 12px !important;
         }
         
+        /* Force user typed characters to be solid black for immediate high visibility */
         div[data-testid="stChatInput"] textarea {
-            color: #00f0ff !important; 
+            color: #000000 !important; 
             background-color: transparent !important;
             font-size: 16px !important;
+            font-weight: 500 !important;
         }
         
         /* Chat bubble styles */
@@ -43,12 +45,26 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# 3. SIDEBAR CONTROL MATRIX (Isolated Per User Session Tab)
+# 3. SIDEBAR CONTROL MATRIX WITH FILE INTEGRATION
 with st.sidebar:
     st.markdown("<h2 style='color: #bd00ff; font-family: monospace;'>[ GLOBAL_CTRL ]</h2>", unsafe_allow_html=True)
     st.caption("DEPLOYMENT STATE: MULTI-USER LIVE PRODUCTION")
     st.divider()
     
+    # 📥 Clean Upload module embedded securely into the sidebar tool rack
+    st.markdown("<b style='color: #bd00ff;'>📥 FILE ANALYZER:</b>", unsafe_allow_html=True)
+    uploaded_file = st.file_uploader("Upload contextual files (.txt, .py, .md)", type=["txt", "py", "md"])
+    
+    injected_context = ""
+    if uploaded_file is not None:
+        try:
+            file_contents = uploaded_file.read().decode("utf-8")
+            st.success(f"✔️ {uploaded_file.name} cached!")
+            injected_context = f"\n\n[FILE DATA ({uploaded_file.name})]:\n```\n{file_contents}\n```\n"
+        except Exception as e:
+            st.error(f"Error: {e}")
+            
+    st.divider()
     temperature = st.slider("Creativity (Temp)", 0.1, 1.0, 0.7, 0.1)
     
     st.divider()
@@ -105,12 +121,13 @@ st.components.v1.html("""
 """, height=0)
 
 # 6. NATIVE STREAMLIT FIXED BOTTOM INPUT CONTAINERBAR
-user_prompt = st.chat_input("Send a message tokens pipeline...")
+user_prompt = st.chat_input("Send a message...")
 
 if user_prompt:
+    full_processed_prompt = user_prompt + injected_context if injected_context else user_prompt
     with st.chat_message("user", avatar="🔮"):
         st.markdown(f"**[TRANS_IN]:** {user_prompt}")
-    st.session_state.cyber_history.append({"role": "user", "content": user_prompt})
+    st.session_state.cyber_history.append({"role": "user", "content": full_processed_prompt})
 
     with st.chat_message("assistant", avatar="⚙️"):
         try:
