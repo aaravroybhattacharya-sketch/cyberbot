@@ -1,14 +1,13 @@
 import streamlit as st
-from groq import Groq  
+from groq import Groq  # Free high-performance cloud AI host
 import time  # Added for rate-limit pause intervals
-
 
 # 1. PREMIUM APPARATUS LAYOUT
 st.set_page_config(
     page_title="NEO-NET GLOBAL CORE // v6.0", 
     page_icon="🔮", 
     layout="wide",
-    initial_sidebar_state="expanded"
+    initial_sidebar_state="collapsed"
 )
 
 # 2. CYBERPUNK HUD DESIGN STYLING WITH SIDE-BY-SIDE INTEGRATION
@@ -33,43 +32,32 @@ st.markdown("""
         /* Clean minimalist upload overrides for the chat row */
         div[data-testid="stFileUploaderDropzone"] { padding: 0 !important; border: none !important; background: transparent !important; min-height: unset !important; }
         div[data-testid="stFileUploaderDropzone"] svg { display: none !important; }
-        div[data-testid="stFileUploaderDropzone"] div { display: none !important; }
         div[data-testid="stFileUploaderFileData"] { display: none !important; }
         .stFileUploader small { display: none !important; }
         .stFileUploader label { display: none !important; }
-        
-        /* 🛠️ Comprehensive Fix: Scrub any lingering hidden text nodes */
         div[data-testid="stWidgetLabel"] { display: none !important; }
         
-        /* 🛠️ Comprehensive Fix: Universal selector overrides to hide all default layout clutter */
-div[data-testid="stFileUploaderDropzone"] * { 
-    display: none !important; 
-}
-
-.stFileUploader button {
-    background: #1a1f26 !important;
-    border: 2px solid #bd00ff !important;
-    color: #00f0ff !important;
-    font-size: 20px !important;
-    font-weight: bold !important;
-    border-radius: 4px !important;
-    width: 100% !important;
-    height: 48px !important;
-    box-shadow: none !important;
-    display: flex !important; 
-    justify-content: center !important;
-    align-items: center !important;
-}
-
-/* Explicitly force the inner text nodes (+ symbol) inside the button block to render */
-.stFileUploader button * { 
-    display: inline-block !important; 
-}
-
-.stFileUploader { 
-    padding-top: 0px !important; 
-}
-
+        /* Universal selector overrides to hide all default layout clutter */
+        div[data-testid="stFileUploaderDropzone"] * { display: none !important; }
+        
+        .stFileUploader button {
+            background: #1a1f26 !important;
+            border: 2px solid #bd00ff !important;
+            color: #00f0ff !important;
+            font-size: 20px !important;
+            font-weight: bold !important;
+            border-radius: 4px !important;
+            width: 100% !important;
+            height: 48px !important;
+            box-shadow: none !important;
+            display: flex !important; 
+            justify-content: center !important;
+            align-items: center !important;
+        }
+        
+        .stFileUploader button * { display: inline-block !important; }
+        .stFileUploader { padding-top: 0px !important; }
+        footer {visibility: hidden;}
     </style>
 """, unsafe_allow_html=True)
 
@@ -85,9 +73,6 @@ with st.sidebar:
     if st.button("⚡ FLUSH MEMORY", use_container_width=True):
         st.session_state.cyber_history = []
         st.rerun()
-
-# Check if the app is being run locally by you or via the public web URL
-is_local_user = st.context.headers.get("Host", "").startswith("localhost") or st.context.headers.get("Host", "").startswith("127.0.0.1")
 
 # 4. INITIALIZE DISPLAY CANVAS
 st.markdown("<h1 class='glow-title'>⚡ NEO-NET GLOBAL // INTERFACE</h1>", unsafe_allow_html=True)
@@ -108,7 +93,6 @@ if st.query_params.get("clear") == "true":
     st.query_params.clear()
 
 if "cyber_history" not in st.session_state:
-
     st.session_state.cyber_history = [
         {"role": "assistant", "content": "🧠 **[NEO-NET GLOBAL CORE ACTIVE]** System is now completely live. Cloud routing pipeline established successfully."}
     ]
@@ -127,7 +111,6 @@ injected_context = ""
 col1, col2 = st.columns([0.07, 0.93])
 
 with col1:
-    # Compact file uploader stripped down to a dedicated row button
     uploaded_file = st.file_uploader("+", type=["txt", "py", "md"], label_visibility="collapsed")
     if uploaded_file is not None:
         try:
@@ -155,40 +138,43 @@ if user_prompt:
                 for attempt in range(max_retries):
                     try:
                         stream = client.chat.completions.create(
-                            model='qwen/qwen3.6-27b',
+                            model='qwen/qwen3.6-27b',  
                             messages=[{"role": m["role"], "content": m["content"]} for m in st.session_state.cyber_history],
                             temperature=temperature,
                             max_tokens=400,
                             stream=True
                         )
-                        # 🛠️ Structural Fix: Intercept and hide internal reasoning monologue blocks completely
-                        in_think_block = False
+                        
+                        text_accumulator = ""
+                        has_filtered_think = False
                         
                         for chunk in stream:
                             if chunk.choices and len(chunk.choices) > 0:
-                                # 🚀 Fixed: Explicitly target the first element of the choices array [0]
                                 first_choice = chunk.choices[0]
                                 delta = first_choice.delta if hasattr(first_choice, 'delta') else first_choice
-
                                 content = getattr(delta, 'content', None)
+                                
                                 if content is not None:
-                                    # If the model initiates a reasoning sequence, set flag to mute output
-                                    if "<think>" in content:
-                                        in_think_block = True
-                                        content = content.replace("<think>", "")
+                                    text_accumulator += content
                                     
-                                    # Once reasoning finishes, release the block flag and continue
-                                    if "</think>" in content:
-                                        in_think_block = False
-                                        content = content.replace("</think>", "")
+                                    # Wait until the structural reasoning text block completes
+                                    if "</think>" in text_accumulator:
+                                        # Slice the text accumulator to isolate the actual answer block
+                                        text_accumulator = text_accumulator.split("</think>")[-1]
+                                        has_filtered_think = True
                                         continue
-                                        
-                                    # Only stream characters to the user screen if we are OUTSIDE the think tags
-                                    if not in_think_block and content:
-                                        yield content
-
-
+                                    
+                                    # If the model didn't emit a <think> tag or we have already passed it, stream out immediately
+                                    if has_filtered_think or ("<think>" not in text_accumulator and len(text_accumulator) > 10):
+                                        if text_accumulator:
+                                            yield text_accumulator
+                                            text_accumulator = ""
+                        
+                        # Yield any remaining text tokens
+                        if text_accumulator and "<think>" not in text_accumulator:
+                            yield text_accumulator
                         return
+                        
                     except Exception as err:
                         if "429" in str(err) and attempt < max_retries - 1:
                             time.sleep(2)
