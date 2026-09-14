@@ -1,7 +1,7 @@
 import streamlit as st
 from groq import Groq  # Free high-performance cloud AI host
 import time  # Added for rate-limit pause intervals
-import re  # 🧠 Added to cleanly filter out hidden reasoning blocks
+import re  # Added to cleanly filter out hidden reasoning blocks
 
 # 1. PREMIUM APPARATUS LAYOUT
 st.set_page_config(
@@ -140,7 +140,7 @@ if user_prompt:
                 for attempt in range(max_retries):
                     try:
                         stream = client.chat.completions.create(
-                            model='qwen/qwen3.6-27b',  # 👑 Back to the absolute smartest reasoning model
+                            model='qwen/qwen3.6-27b',  # 👑 Smartest reasoning model
                             messages=[{"role": m["role"], "content": m["content"]} for m in st.session_state.cyber_history],
                             temperature=temperature,
                             max_tokens=400,
@@ -152,12 +152,14 @@ if user_prompt:
                         
                         for chunk in stream:
                             if chunk.choices and len(chunk.choices) > 0:
-                                delta = chunk.choices.delta
+                                # 🚀 Security Patch: Targeting index zero list layout explicitly
+                                first_choice = chunk.choices[0]
+                                delta = first_choice.delta if hasattr(first_choice, 'delta') else first_choice
                                 content = getattr(delta, 'content', None)
                                 if content is not None:
                                     full_response_text += content
                                     
-                                    # 🚀 Fix: Strip out anything inside <think> tags instantly using regex patterns
+                                    # Strip out everything inside <think> tags instantly using regex patterns
                                     clean_text = re.sub(r'<think>.*?</think>', '', full_response_text, flags=re.DOTALL)
                                     clean_text = re.sub(r'<think>.*', '', clean_text, flags=re.DOTALL)
                                     
