@@ -139,7 +139,7 @@ if user_prompt:
                 for attempt in range(max_retries):
                     try:
                         stream = client.chat.completions.create(
-                            model='deepseek-r1-distill-llama-70b',  
+                            model='deepseek-r1-distill-llama-70b',
                             messages=[{"role": m["role"], "content": m["content"]} for m in st.session_state.cyber_history],
                             temperature=temperature,
                             max_tokens=600,
@@ -166,36 +166,40 @@ if user_prompt:
                                         yield new_content
                         return
                         
-                                except Exception as err:
-                    # Fallback step if free tier limits bottleneck the active request
-                    if "404" in str(err) or "decommissioned" in str(err):
-                        try:
-                            stream = client.chat.completions.create(
-                                model='llama-3.3-70b-specversatile', # High-end flagship backup
-                                messages=[{"role": m["role"], "content": m["content"]} for m in st.session_state.cyber_history],
-                                temperature=temperature,
-                                max_tokens=600,
-                                stream=True
-                            )
-                            # Standard streaming loop for backup
-                            full_response_text = ""
-                            last_displayed_length = 0
-                            for chunk in stream:
-                                if chunk.choices and len(chunk.choices) > 0:
-                                    content = chunk.choices.delta.content
-                                    if content:
-                                        full_response_text += content
-                                        if len(full_response_text) > last_displayed_length:
-                                            yield full_response_text[last_displayed_length:]
-                                            last_displayed_length = len(full_response_text)
-                            return
-                        except Exception:
-                            pass
-                    if "429" in str(err) and attempt < max_retries - 1:
-                        time.sleep(3.0)  # Cool down for multi-user demands
-                        continue
-                    yield f"\n\n⚠️ [STREAM_INTERRUPTION]: Cloud core dropped packages. Details: {str(err)}"
-                    return
+                    except Exception as err:
+                        if "404" in str(err) or "decommissioned" in str(err):
+                            try:
+                                stream = client.chat.completions.create(
+                                    model='llama-3.3-70b-specversatile',
+                                    messages=[{"role": m["role"], "content": m["content"]} for m in st.session_state.cyber_history],
+                                    temperature=temperature,
+                                    max_tokens=600,
+                                    stream=True
+                                )
+                                full_response_text = ""
+                                last_displayed_length = 0
+                                for chunk in stream:
+                                    if chunk.choices and len(chunk.choices) > 0:
+                                        content = chunk.choices[0].delta.content
+                                        if content:
+                                            full_response_text += content
+                                            if len(full_response_text) > last_displayed_length:
+                                                yield full_response_text[last_displayed_length:]
+                                                last_displayed_length = len(full_response_text)
+                                return
+                            except Exception:
+                                pass
+                        if "429" in str(err) and attempt < max_retries - 1:
+                            time.sleep(3.0)
+                            continue
+                        yield f"\n\n⚠️ [STREAM_INTERRUPTION]: Cloud core dropped packages. Details: {str(err)}"
+                        return
+                            
+            full_reply = answer_container.write_stream(response_streamer())
+            st.session_state.cyber_history.append({"role": "assistant", "content": full_reply})
+            st.rerun()  
+        except Exception as e:
+            st.error(f"[SYSTEM_LAUNCH_ERROR]: Cloud connection dropped. Details: {e}")
 
                             
             full_reply = answer_container.write_stream(response_streamer())
