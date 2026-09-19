@@ -18,13 +18,18 @@ st.markdown("""
         section[data-testid="stSidebar"] { background-color: #11151c !important; }
         section[data-testid="stSidebar"] * { color: #ffffff !important; }
         
-        /* 🎨 STYLING FOR THE BOTTOM PINNED CHAT BAR WITH BLACK TEXT INJECTION */
-        div[data-testid="stChatInput"] {
-            background-color: #e2e8f0 !important; /* Lighter background canvas layer */
-            border: 2px solid #bd00ff !important;
-            border-radius: 24px !important;
-            padding: 4px 12px !important;
-        }
+        /* 👑 NEW PATCHED STYLE BLOCK (Change to this): */
+    div[data-testid="stChatInput"] {
+        background-color: #e2e8f0 !important; 
+        border: 2px solid #bd00ff !important;
+        border-radius: 24px !important;
+        padding: 4px 12px !important;
+}
+
+/* Force hide the hidden duplicate background text label completely */
+div[data-testid="stChatInput"] label {
+    display: none !important;
+}
         
         /* Force user typed characters to be solid black for immediate high visibility */
         div[data-testid="stChatInput"] textarea {
