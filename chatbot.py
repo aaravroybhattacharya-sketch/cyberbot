@@ -146,7 +146,7 @@ if user_prompt:
                 for attempt in range(max_retries):
                     try:
                         stream = client.chat.completions.create(
-                            model='llama-3.3-70b-versatile',
+                            model='llama-3.1-8b-instant',
                             messages=[{"role": m["role"], "content": m["content"]} for m in st.session_state.cyber_history],
                             temperature=temperature,
                             max_tokens=600,
