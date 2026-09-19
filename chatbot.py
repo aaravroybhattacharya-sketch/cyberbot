@@ -89,14 +89,21 @@ if "GROQ_API_KEY" not in st.secrets:
 client = Groq(api_key=st.secrets["GROQ_API_KEY"])
 
 # Multi-User Isolation: Store chat arrays directly into isolated browser tab session state
+# Initialize session history with a custom built-in system persona instruction block
 if "cyber_history" not in st.session_state:
     st.session_state.cyber_history = [
-        {"role": "assistant", "content": "🧠 **[NEO-NET GLOBAL CORE ACTIVE]** System is now completely live. Cloud routing pipeline established successfully."}
+        {"role": "system", "content": "You are NEO-NET CORE, a custom-built, elite AI assistant optimized for highly advanced tasks, complex software engineering, logic, and reasoning."},
+        {"role": "assistant", "content": "🧠 **[CUSTOM CORE DEPLOYED]** Highly advanced computing architecture linked. Ask me your most complex logical, mathematical, or software engineering questions."}
     ]
 
+
 # Render chat logs
+# Render chat logs (hide the custom internal system rule block from printing on screen)
 for message in st.session_state.cyber_history:
+    if message["role"] == "system":
+        continue
     avatar = "🔮" if message["role"] == "user" else "⚙️"
+
     clean_display = message["content"]
     clean_display = re.sub(r'<think>.*?</think>', '', clean_display, flags=re.DOTALL)
     clean_display = re.sub(r'<think>.*', '', clean_display, flags=re.DOTALL)
@@ -139,7 +146,7 @@ if user_prompt:
                 for attempt in range(max_retries):
                     try:
                         stream = client.chat.completions.create(
-                            model='deepseek-r1-distill-llama-70b',
+                            model='llama-3.3-70b-specversatile',
                             messages=[{"role": m["role"], "content": m["content"]} for m in st.session_state.cyber_history],
                             temperature=temperature,
                             max_tokens=600,
