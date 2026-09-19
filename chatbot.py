@@ -146,7 +146,7 @@ if user_prompt:
                 for attempt in range(max_retries):
                     try:
                         stream = client.chat.completions.create(
-                            model='llama-3.1-8b-instant',
+                            model='llama3-8b-8192',
                             messages=[{"role": m["role"], "content": m["content"]} for m in st.session_state.cyber_history],
                             temperature=temperature,
                             max_tokens=600,
@@ -177,7 +177,7 @@ if user_prompt:
                         if "404" in str(err) or "decommissioned" in str(err):
                             try:
                                 stream = client.chat.completions.create(
-                                    model='llama-3.1-8b-instant',
+                                    model='llama3-8b-8192',
                                     messages=[{"role": m["role"], "content": m["content"]} for m in st.session_state.cyber_history],
                                     temperature=temperature,
                                     max_tokens=600,
