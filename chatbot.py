@@ -149,7 +149,7 @@ if user_prompt:
                             model='openai/gpt-oss-120b',
                             messages=[{"role": m["role"], "content": m["content"]} for m in st.session_state.cyber_history],
                             temperature=temperature,
-                            max_tokens=600,
+                            max_tokens=1000,
                             stream=True
                         )
                         
