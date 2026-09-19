@@ -166,7 +166,7 @@ if user_prompt:
                                         yield new_content
                         return
                         
-                                    except Exception as err:
+                                except Exception as err:
                     # Fallback step if free tier limits bottleneck the active request
                     if "404" in str(err) or "decommissioned" in str(err):
                         try:
