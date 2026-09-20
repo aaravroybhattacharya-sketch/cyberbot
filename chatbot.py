@@ -11,27 +11,53 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# 2. CYBERPUNK HUD DESIGN STYLING WITH SOLID BLACK TEXT BAR INJECTION
+# 2. CYBERPUNK HUD DESIGN STYLING (OPTIMIZED READABILITY PATCH)
 st.markdown("""
     <style>
-        .stApp { background-color: #0d0f12 !important; color: #ffffff !important; }
+        /* Base application background */
+        .stApp { background-color: #0d0f12 !important; }
+        
+        /* 1. PRIMARY HEADERS & TITLES */
+        .stApp h1, .stApp h2, .stApp h3, .stApp h4 {
+            color: #00f0ff !important;
+            font-family: 'Courier New', monospace;
+        }
+        
+        /* 2. BODY TEXT & PARAGRAPHS (Off-white to prevent glare) */
+        .stApp p, .stApp span, .stApp li, .stApp td {
+            color: #e2e8f0 !important;
+            font-size: 16px !important;
+        }
+        
+        /* 3. BOLD TEXT / DEFINITION TERMS (Pure white pop) */
+        .stApp strong, .stApp b, .stApp th {
+            color: #ffffff !important;
+            font-weight: 600 !important;
+        }
+        
+        /* 4. MUTED SECONDARY TEXT (Captions, labels) */
+        .stApp label, .stApp small {
+            color: #94a3b8 !important;
+        }
+        
+        /* Sidebar layout styling */
         section[data-testid="stSidebar"] { background-color: #11151c !important; }
-        section[data-testid="stSidebar"] * { color: #ffffff !important; }
+        section[data-testid="stSidebar"] * { color: #e2e8f0 !important; }
         
-        /* 👑 NEW PATCHED STYLE BLOCK (Change to this): */
-    div[data-testid="stChatInput"] {
-        background-color: #e2e8f0 !important; 
-        border: 2px solid #bd00ff !important;
-        border-radius: 24px !important;
-        padding: 4px 12px !important;
-}
+        /* Main Chat Input Container */
+        div[data-testid="stChatInput"] {
+            background-color: #e2e8f0 !important; 
+            border: 2px solid #bd00ff !important;
+            border-radius: 24px !important;
+            padding: 4px 12px !important;
+        }
 
-/* Force hide the hidden duplicate background text label completely */
-div[data-testid="stChatInput"] label {
-    display: none !important;
-}
+        /* Force hide the hidden duplicate background text label completely */
+        div[data-testid="stChatInput"] label {
+            display: none !important;
+        }
         
-        /* Force user typed characters to be solid black for immediate high visibility */
+        /* Preserved: Solid black text inside input workspace for typing clarity */
         div[data-testid="stChatInput"] textarea {
             color: #000000 !important; 
             background-color: transparent !important;
@@ -40,15 +66,25 @@ div[data-testid="stChatInput"] label {
         }
         
         /* Chat bubble styles */
-        div[data-testid="stChatMessage"] { background-color: #13171f !important; border-left: 4px solid #00f0ff !important; border-radius: 4px 12px 12px 4px !important; margin-bottom: 15px !important; padding: 20px !important; }
-        div[data-testid="stChatMessage"] p, div[data-testid="stChatMessage"] span, div[data-testid="stChatMessage"] li { color: #ffffff !important; font-size: 16px !important; }
+        div[data-testid="stChatMessage"] { 
+            background-color: #13171f !important; 
+            border-left: 4px solid #00f0ff !important; 
+            border-radius: 4px 12px 12px 4px !important; 
+            margin-bottom: 15px !important; 
+            padding: 20px !important; 
+        }
+        div[data-testid="stChatMessage"] p, div[data-testid="stChatMessage"] span, div[data-testid="stChatMessage"] li { color: #e2e8f0 !important; }
+        
+        /* User response alternating bubbles */
         div[data-testid="stChatMessage"]:has(div[data-testid="stChatMessageAvatar"]):nth-child(even) { border-left: 4px solid #bd00ff !important; background-color: #17131f !important; }
-        div[data-testid="stChatMessage"]:has(div[data-testid="stChatMessageAvatar"]):nth-child(even) p, div[data-testid="stChatMessage"]:has(div[data-testid="stChatMessageAvatar"]):nth-child(even) span { color: #00f0ff !important; }
-        .glow-title { color: #00f0ff; text-shadow: 0 0 12px rgba(0, 240, 255, 0.6); font-family: 'Courier New', monospace; font-weight: bold; font-size: 2.5rem; }
+        div[data-testid="stChatMessage"]:has(div[data-testid="stChatMessageAvatar"]):nth-child(even) p, div[data-testid="stChatMessage"]:has(div[data-testid="stChatMessageAvatar"]):nth-child(even) span { color: #a855f7 !important; }
+        
+        .glow-title { color: #00f0ff !important; text-shadow: 0 0 12px rgba(0, 240, 255, 0.6); font-weight: bold; font-size: 2.5rem; }
         
         footer {visibility: hidden;}
     </style>
 """, unsafe_allow_html=True)
+
 
 # 3. SIDEBAR CONTROL MATRIX WITH FILE INTEGRATION
 with st.sidebar:
