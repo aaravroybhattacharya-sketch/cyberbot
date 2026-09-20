@@ -86,35 +86,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 
-# 3. SIDEBAR CONTROL MATRIX WITH FILE INTEGRATION
-with st.sidebar:
-    st.markdown("<h2 style='color: #bd00ff; font-family: monospace;'>[ GLOBAL_CTRL ]</h2>", unsafe_allow_html=True)
-    st.caption("DEPLOYMENT STATE: MULTI-USER LIVE PRODUCTION")
-    st.divider()
-    
-    # 📥 Clean Upload module embedded securely into the sidebar tool rack
-    st.markdown("<b style='color: #bd00ff;'>📥 FILE ANALYZER:</b>", unsafe_allow_html=True)
-    uploaded_file = st.file_uploader("Upload contextual files (.txt, .py, .md)", type=["txt", "py", "md"])
-    
-    injected_context = ""
-    if uploaded_file is not None:
-        try:
-            file_contents = uploaded_file.read().decode("utf-8")
-            st.success(f"✔️ {uploaded_file.name} cached!")
-            injected_context = f"\n\n[FILE DATA ({uploaded_file.name})]:\n```\n{file_contents}\n```\n"
-        except Exception as e:
-            st.error(f"Error: {e}")
-            
-    st.divider()
-    temperature = st.slider("Creativity (Temp)", 0.1, 1.0, 0.4, 0.1) # Default set to 0.4 for higher logical accuracy
-
-    
-    st.divider()
-    if st.button("⚡ FLUSH MEMORY", use_container_width=True):
-        st.session_state.cyber_history = [
-            {"role": "assistant", "content": "🧠 **[NEO-NET GLOBAL CORE ACTIVE]** Local vault cleared. System session initialized successfully."}
-        ]
-        st.rerun()
+# 3 Removed sidebar controls
 
 # 4. INITIALIZE DISPLAY CANVAS
 st.markdown("<h1 class='glow-title'>⚡ NEO-NET GLOBAL // INTERFACE</h1>", unsafe_allow_html=True)
@@ -169,8 +141,26 @@ st.html("""
     </script>
 """)
 
-# 6. NATIVE STREAMLIT FIXED BOTTOM INPUT CONTAINERBAR
-user_prompt = st.chat_input("Send a message...")
+# 6. BOTTOM CONSOLE DOCK WITH SIDE-BY-SIDE BUTTON AND TEXTBAR
+bottom_dock = st.container()
+with bottom_dock:
+    col_input, col_upload = st.columns([6, 1])  # 6:1 width ratio layout
+    
+    with col_upload:
+        # Places the upload file node right next to the entry space line row
+        uploaded_file = st.file_uploader("", type=["txt", "py", "md"], label_visibility="collapsed")
+        
+        injected_context = ""
+        if uploaded_file is not None:
+            try:
+                file_contents = uploaded_file.read().decode("utf-8")
+                injected_context = f"\n\n[FILE DATA ({uploaded_file.name})]:\n```\n{file_contents}\n```\n"
+            except Exception as e:
+                st.error(f"Error: {e}")
+
+    with col_input:
+        user_prompt = st.chat_input("Send a message...")
+
 
 if user_prompt:
     full_processed_prompt = user_prompt + injected_context if injected_context else user_prompt
