@@ -154,7 +154,7 @@ if user_prompt:
                             model='openai/gpt-oss-120b',
                             messages=[{"role": m["role"], "content": m["content"]} for m in st.session_state.cyber_history],
                             temperature=temperature,
-                            max_tokens=1000,
+                            max_tokens=5000,  # 🚀 INCREASED: Gives the model plenty of room to reply
                             stream=True
                         )
                         
@@ -185,7 +185,7 @@ if user_prompt:
                                     model='openai/gpt-oss-120b',
                                     messages=[{"role": m["role"], "content": m["content"]} for m in st.session_state.cyber_history],
                                     temperature=temperature,
-                                    max_tokens=600,
+                                    max_tokens=5000,  # 🚀 INCREASED here too
                                     stream=True
                                 )
                                 full_response_text = ""
@@ -206,13 +206,6 @@ if user_prompt:
                             continue
                         yield f"\n\n⚠️ [STREAM_INTERRUPTION]: Cloud core dropped packages. Details: {str(err)}"
                         return
-                            
-            full_reply = answer_container.write_stream(response_streamer())
-            st.session_state.cyber_history.append({"role": "assistant", "content": full_reply})
-            st.rerun()  
-        except Exception as e:
-            st.error(f"[SYSTEM_LAUNCH_ERROR]: Cloud connection dropped. Details: {e}")
-
                             
             full_reply = answer_container.write_stream(response_streamer())
             st.session_state.cyber_history.append({"role": "assistant", "content": full_reply})
