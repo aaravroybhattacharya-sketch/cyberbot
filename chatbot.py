@@ -98,20 +98,16 @@ section[data-testid="stSidebar"] { display: none !important; }
             display: block !important;
         }
         
-        /* Forces all text items inside the white background block to be solid black */
+                /* 🚀 Combines all layers into a single absolute black rule */
         div[data-testid="stChatMessage"] p, 
         div[data-testid="stChatMessage"] span, 
         div[data-testid="stChatMessage"] li, 
         div[data-testid="stChatMessage"] td, 
-        div[data-testid="stChatMessage"] th { 
-            color: #000000 !important; 
+        div[data-testid="stChatMessage"] th,
+        div[data-testid="stChatMessage"] code { 
+            color: #000000 !important; /* Forces EVERY element on both sides to be black */
         }
-        
-        /* Alternating Bubble (User response container block for contrast) */
-        div[data-testid="stChatMessage"]:has(div[data-testid="stChatMessageAvatar"]):nth-child(even) { 
-            background-color: #3b0033 !important;  /* Muted dark wine color for the user bubble */
-            border-left: 4px solid #bd00ff !important; 
-        }
+
 
         
         /* Forces user bubble text to also stay solid black */
