@@ -66,17 +66,16 @@ st.markdown("""
             font-weight: 500 !important;
         }
         
-        /* Chat bubble styles */
-        /* Chat bubble styles (White background with solid black text) */
+        /* Chat bubble styles (Custom Pink background with solid black text) */
         div[data-testid="stChatMessage"] { 
-            background-color: #ffffff !important;   /* 🚀 White bubble background */
+            background-color: #CD0BF4 !important;   /* 🚀 Custom light pink bubble background */
             border-left: 4px solid #00f0ff !important; 
             border-radius: 4px 12px 12px 4px !important; 
             margin-bottom: 15px !important; 
             padding: 20px !important; 
         }
         
-        /* Forces all text, lists, and table contents inside the bubbles to be solid black */
+        /* Forces all text, lists, and table contents inside the bubbles to be solid black for high contrast */
         div[data-testid="stChatMessage"] p, 
         div[data-testid="stChatMessage"] span, 
         div[data-testid="stChatMessage"] li, 
@@ -84,6 +83,19 @@ st.markdown("""
         div[data-testid="stChatMessage"] th { 
             color: #000000 !important; 
         }
+        
+        /* User response alternating bubbles (Soft muted gray-purple for easy differentiation) */
+        div[data-testid="stChatMessage"]:has(div[data-testid="stChatMessageAvatar"]):nth-child(even) { 
+            border-left: 4px solid #bd00ff !important; 
+            background-color: #e2e8f0 !important;  /* 🚀 Contrast block for the user's messages */
+        }
+        
+        /* Forces user bubble text to also stay solid black */
+        div[data-testid="stChatMessage"]:has(div[data-testid="stChatMessageAvatar"]):nth-child(even) p, 
+        div[data-testid="stChatMessage"]:has(div[data-testid="stChatMessageAvatar"]):nth-child(even) span { 
+            color: #000000 !important; 
+        }
+
         
         /* User response alternating bubbles (Light purple background for contrast) */
         div[data-testid="stChatMessage"]:has(div[data-testid="stChatMessageAvatar"]):nth-child(even) { 
