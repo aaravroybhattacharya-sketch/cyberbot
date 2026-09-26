@@ -25,8 +25,9 @@ st.markdown("""
 [data-testid="collapsedControl"] { display: none !important; }
 section[data-testid="stSidebar"] { display: none !important; }
 
-/* 🚀 Sets professional base layout canvas theme colors */
+/* 🚀 Sets the uniform ChatGPT dark gray canvas layer */
 .stApp { background-color: #171717 !important; }
+
 
         
         /* 1. PRIMARY HEADERS & TITLES */
@@ -36,9 +37,11 @@ section[data-testid="stSidebar"] { display: none !important; }
         }
         
         /* 2. BODY TEXT & PARAGRAPHS (Off-white to prevent glare) */
-        .stApp p, .stApp span, .stApp li, .stApp td {
-            color: #e2e8f0 !important;
-            font-size: 16px !important;
+        /* 🚀 Softens text overlays with low-contrast off-white tokens */
+        .stApp p, .stApp span, .stApp li, .stApp td, .stApp h1, .stApp h2, .stApp h3 { 
+        color: #ECECEC !important; 
+        font-size: 16px !important;
+        
         }
         
         /* 3. BOLD TEXT / DEFINITION TERMS (Pure white pop) */
@@ -48,9 +51,11 @@ section[data-testid="stSidebar"] { display: none !important; }
         }
         
         /* 4. MUTED SECONDARY TEXT (Captions, labels) */
-        .stApp label, .stApp small {
-            color: #94a3b8 !important;
+        /* 🚀 Flags secondary layers down to clean mid-gray visibility */
+        .stApp label, .stApp small, .stApp caption { 
+        color: #B4B4B4 !important; 
         }
+
         
         /* Sidebar layout styling */
         section[data-testid="stSidebar"] { background-color: #11151c !important; }
@@ -58,16 +63,16 @@ section[data-testid="stSidebar"] { display: none !important; }
         
         /* Main Chat Input Container */
         /* 🚀 Elements take on layered surface depths */
-        div[data-testid="stChatInput"] {
-        background-color: #262626 !important; /* Surface Layer Container */
-        border: 1px solid #2C2C2E !important;  /* Sharp border lines */
-        border-radius: 8px !important;
-        padding: 4px 12px !important;
+        /* 🚀 Re-skins input console to reflect uniform gray theme elements */
+       div[data-testid="stChatInput"] {
+           background-color: #212121 !important; 
+           border: 1px solid #2F2F2F !important;
+           border-radius: 12px !important;
         }
-        div[data-testid="stChatInput"] textarea {
-            color: #F5F5F7 !important; /* Crisp Off-White readable font */
-            background-color: transparent !important;
+       div[data-testid="stChatInput"] textarea {
+           color: #ECECEC !important; /* Low contrast active typing font */
         }
+
 
             font-size: 16px !important;
             font-weight: 500 !important;
