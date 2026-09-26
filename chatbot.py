@@ -67,14 +67,36 @@ st.markdown("""
         }
         
         /* Chat bubble styles */
+        /* Chat bubble styles (White background with solid black text) */
         div[data-testid="stChatMessage"] { 
-            background-color: #13171f !important; 
+            background-color: #ffffff !important;   /* 🚀 White bubble background */
             border-left: 4px solid #00f0ff !important; 
             border-radius: 4px 12px 12px 4px !important; 
             margin-bottom: 15px !important; 
             padding: 20px !important; 
         }
-        div[data-testid="stChatMessage"] p, div[data-testid="stChatMessage"] span, div[data-testid="stChatMessage"] li { color: #e2e8f0 !important; }
+        
+        /* Forces all text, lists, and table contents inside the bubbles to be solid black */
+        div[data-testid="stChatMessage"] p, 
+        div[data-testid="stChatMessage"] span, 
+        div[data-testid="stChatMessage"] li, 
+        div[data-testid="stChatMessage"] td, 
+        div[data-testid="stChatMessage"] th { 
+            color: #000000 !important; 
+        }
+        
+        /* User response alternating bubbles (Light purple background for contrast) */
+        div[data-testid="stChatMessage"]:has(div[data-testid="stChatMessageAvatar"]):nth-child(even) { 
+            border-left: 4px solid #bd00ff !important; 
+            background-color: #f3e8ff !important;  /* 🚀 Soft light purple so you can tell user vs assistant apart */
+        }
+        
+        /* Forces user bubble text to also stay solid black */
+        div[data-testid="stChatMessage"]:has(div[data-testid="stChatMessageAvatar"]):nth-child(even) p, 
+        div[data-testid="stChatMessage"]:has(div[data-testid="stChatMessageAvatar"]):nth-child(even) span { 
+            color: #000000 !important; 
+        }
+
         
         /* User response alternating bubbles */
         div[data-testid="stChatMessage"]:has(div[data-testid="stChatMessageAvatar"]):nth-child(even) { border-left: 4px solid #bd00ff !important; background-color: #17131f !important; }
