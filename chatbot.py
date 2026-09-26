@@ -69,11 +69,10 @@ section[data-testid="stSidebar"] { display: none !important; }
            border: 1px solid #2F2F2F !important;
            border-radius: 12px !important;
         }
-       div[data-testid="stChatInput"] textarea {
-           color: #ECECEC !important; /* Low contrast active typing font */
-        }
-
-
+               /* 🚀 Forces the text you type into the textbox to be solid black */
+        div[data-testid="stChatInput"] textarea {
+            color: #000000 !important; 
+            background-color: transparent !important;
             font-size: 16px !important;
             font-weight: 500 !important;
         }
@@ -99,14 +98,10 @@ section[data-testid="stSidebar"] { display: none !important; }
         }
         
                 /* 🚀 Combines all layers into a single absolute black rule */
-        div[data-testid="stChatMessage"] p, 
-        div[data-testid="stChatMessage"] span, 
-        div[data-testid="stChatMessage"] li, 
-        div[data-testid="stChatMessage"] td, 
-        div[data-testid="stChatMessage"] th,
-        div[data-testid="stChatMessage"] code { 
-            color: #000000 !important; /* Forces EVERY element on both sides to be black */
-        }
+                /* 🚀 Aggressively forces ALL inner message containers, lists, code, and early greetings to black */
+                div[data-testid="stChatMessage"] * { 
+                    color: #000000 !important; 
+                }
 
 
         
