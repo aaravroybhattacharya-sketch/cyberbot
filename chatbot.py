@@ -3,6 +3,7 @@ from groq import Groq  # Free high-performance cloud AI host
 import time  # Added for rate-limit pause intervals
 import re  # Added to cleanly filter out hidden reasoning blocks
 temperature = 0.7
+injected_context = "" # 🎯 Fixed: Initialized globally so it is always defined
 
 # 1. PREMIUM APPARATUS LAYOUT (NO SIDEBAR)
 st.set_page_config(
