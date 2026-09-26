@@ -2,6 +2,7 @@ import streamlit as st
 from groq import Groq  # Free high-performance cloud AI host
 import time  # Added for rate-limit pause intervals
 import re  # Added to cleanly filter out hidden reasoning blocks
+temperature = 0.4
 
 # 1. PREMIUM APPARATUS LAYOUT
 st.set_page_config(
