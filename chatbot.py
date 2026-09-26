@@ -66,16 +66,26 @@ st.markdown("""
             font-weight: 500 !important;
         }
         
-        /* Chat bubble styles (Custom Pink background with solid black text) */
+                /* Main Chat Bubble (Background color set to #B00099) */
         div[data-testid="stChatMessage"] { 
-            background-color: #CD0BF4 !important;   /* 🚀 Custom light pink bubble background */
+            background-color: #B00099 !important;   /* 🚀 Custom Deep Magenta Background */
             border-left: 4px solid #00f0ff !important; 
-            border-radius: 4px 12px 12px 4px !important; 
+            border-radius: 8px 16px 16px 8px !important; 
             margin-bottom: 15px !important; 
-            padding: 20px !important; 
+            padding: 16px !important; 
         }
         
-        /* Forces all text, lists, and table contents inside the bubbles to be solid black for high contrast */
+        /* 🚀 White Box Overlay containing the Text Blocks */
+        div[data-testid="stChatMessage"] div.stMarkdown,
+        div[data-testid="stChatMessage"] [data-testid="stMarkdownContainer"] {
+            background-color: #ffffff !important;   /* White text background container */
+            border: 2px solid #ffffff !important;   /* Surrounds the text with white */
+            padding: 12px 16px !important;
+            border-radius: 8px !important;
+            display: block !important;
+        }
+        
+        /* Forces all text items inside the white background block to be solid black */
         div[data-testid="stChatMessage"] p, 
         div[data-testid="stChatMessage"] span, 
         div[data-testid="stChatMessage"] li, 
@@ -84,11 +94,12 @@ st.markdown("""
             color: #000000 !important; 
         }
         
-        /* User response alternating bubbles (Soft muted gray-purple for easy differentiation) */
+        /* Alternating Bubble (User response container block for contrast) */
         div[data-testid="stChatMessage"]:has(div[data-testid="stChatMessageAvatar"]):nth-child(even) { 
+            background-color: #3b0033 !important;  /* Muted dark wine color for the user bubble */
             border-left: 4px solid #bd00ff !important; 
-            background-color: #e2e8f0 !important;  /* 🚀 Contrast block for the user's messages */
         }
+
         
         /* Forces user bubble text to also stay solid black */
         div[data-testid="stChatMessage"]:has(div[data-testid="stChatMessageAvatar"]):nth-child(even) p, 
