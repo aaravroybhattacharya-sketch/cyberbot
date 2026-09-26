@@ -1,0 +1,20 @@
+name: Keep App Awake
+
+on:
+  schedule:
+    - cron: '0 */8 * * *' # 🚀 Fires automatically every 8 hours
+  workflow_dispatch:      # Allows you to click a button and trigger it manually
+
+jobs:
+  ping_repo:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository Code
+        uses: actions/checkout@v4
+
+      - name: Inject Empty Keep-Alive Commit
+        run: |
+          git config --local user.email "actions@github.com"
+          git config --local user.name "github-actions[bot]"
+          git commit --allow-empty -m "🔋 System Keep-Alive Sync Trigger"
+          git push
